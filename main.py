@@ -1,16 +1,53 @@
-# This is a sample Python script.
+import asyncio
+import logging
+import sys
+from os import getenv
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from aiogram import Bot, Dispatcher, html, types, F
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.filters import CommandStart, Command
+from aiogram.types import Message
+
+TOKEN = "bot_token"
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+dp = Dispatcher()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@dp.message(CommandStart())
+async def command_start_handler(message: Message) -> None:
+    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+@dp.message(Command('servers'))
+async def cmd_hi(message: types.Message):
+    buttons = [
+        [
+            types.KeyboardButton(text='Add server'),
+            types.KeyboardButton(text='List connected servers')
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=buttons,
+        resize_keyboard=True,
+        input_field_placeholder='Press the button'
+    )
+    await message.answer(f'Press the button', reply_markup=keyboard)
+
+@dp.message(F.text.lower() == 'add server')
+async def add_server(message: types.Message):
+    await message.answer('Проверяем')
+
+@dp.message(F.text.lower() == 'list connected servers')
+async def list_connected_servers(message: types.Message):
+    await message.reply('d')
+
+async def main() -> None:
+    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    asyncio.run(main())
