@@ -15,8 +15,8 @@ router = Router()
 async def command_start_handler(message: Message) -> None:
     async with async_session() as session:
 
-        result = await session.execute(select(User).filter_by(user_id=message.from_user.id))
-        user = result.scalar_one_or_none()
+        filter_result = await session.execute(select(User).filter_by(user_id=message.from_user.id))
+        user = filter_result.scalar_one_or_none()
 
         if not user:
             new_user = User(user_id=message.from_user.id)
@@ -39,8 +39,8 @@ async def add_server_start(message: types.Message, state: FSMContext):
 async def process_ip(message: types.Message, state: FSMContext):
     async with async_session() as session:
 
-        result = await session.execute(select(ServerList).filter_by(ip=message.text, user_id=message.from_user.id))
-        server = result.scalar_one_or_none()
+        filter_result = await session.execute(select(ServerList).filter_by(ip=message.text, user_id=message.from_user.id))
+        server = filter_result.scalar_one_or_none()
 
         if not server:
             validate_ip = ValidateIP(message.text)
@@ -75,8 +75,8 @@ async def info_server(callback: CallbackQuery):
     server_id = int(callback.data.split("_")[1])
 
     async with async_session() as session:
-        result = await session.execute(select(ServerList).filter_by(id=server_id))
-        server = result.scalar_one_or_none()
+        filter_result = await session.execute(select(ServerList).filter_by(id=server_id))
+        server = filter_result.scalar_one_or_none()
 
         if not server:
             return await callback.message.answer("Server not found", show_alert=True)
@@ -89,5 +89,5 @@ async def info_server(callback: CallbackQuery):
         await callback.message.answer(f"✅ {server.ip} success!")
     else:
         await callback.message.answer(f"❌ Error")
-    await callback.answer()
+    return await callback.answer()
 

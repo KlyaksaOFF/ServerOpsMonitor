@@ -13,8 +13,9 @@ load_dotenv()
 TOKEN = (getenv("BOT_TOKEN"))
 
 dp = Dispatcher()
-dp.include_router(router_main)
 dp.include_router(router_keyboard)
+dp.include_router(router_main)
+
 
 async def main() -> None:
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
