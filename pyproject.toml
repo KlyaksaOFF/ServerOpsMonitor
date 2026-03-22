@@ -1,5 +1,5 @@
 [project]
-name="ServerOps Monitor"
+name="ServerOps_Monitor"
 version = "0.1.0"
 description = "Telegram bot for monitoring and managing servers via Ansible."
 readme = "README.md"
