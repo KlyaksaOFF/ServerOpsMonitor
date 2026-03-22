@@ -4,7 +4,9 @@ from sqlalchemy import select
 from aiogram import html, types, F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
-from engine_sql.models import User, ServerList, async_session, AddServer
+from engine_sql.models import User, ServerList
+from engine_sql.fsm_states import  AddServer
+from engine_sql.db import async_session
 from aiogram.fsm.context import FSMContext
 from .validate import ValidateIP
 
@@ -79,15 +81,18 @@ async def info_server(callback: CallbackQuery):
         server = filter_result.scalar_one_or_none()
 
         if not server:
-            return await callback.message.answer("Server not found", show_alert=True)
+            return await callback.answer("Server not found", show_alert=True)
 
-    await callback.message.answer(f"{server.id}. {server.ip}, {server.user_id}, {server.password}")
-
+    await callback.message.answer(f"Check server: {server.ip}")
+    data = []
     runner = await ping_server(server)
+    for event in runner.events:
+        if event.get('event') == 'runner_on_ok':
+            data.append(event['event_data']['res'])
+    await callback.message.answer(f"✅ {server.ip} \n\n"
+                                  f"Ping: {data[0]['ping']} \n"
+                                  f"Uptime: {data[1]['stdout']}"
+                                  if runner.rc == 0 else "Error")
 
-    if runner.rc == 0:
-        await callback.message.answer(f"✅ {server.ip} success!")
-    else:
-        await callback.message.answer(f"❌ Error")
     return await callback.answer()
 

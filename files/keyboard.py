@@ -1,7 +1,8 @@
 from sqlalchemy import select
 from aiogram import types, F, Router
 from aiogram.filters import Command
-from engine_sql.models import ServerList, async_session
+from engine_sql.models import ServerList
+from engine_sql.db import async_session
 from aiogram.fsm.context import FSMContext
 
 router = Router()

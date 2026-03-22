@@ -1,21 +1,8 @@
 import asyncio
 from sqlalchemy import String, BigInteger
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from aiogram.fsm.state import StatesGroup, State
-from dotenv import load_dotenv
-from os import getenv
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from .db import engine
 
-load_dotenv()
-TOKEN = (getenv("BOT_TOKEN"))
-
-engine = create_async_engine(getenv('PSQL'), echo=True)
-async_session = async_sessionmaker(engine, expire_on_commit=False)
-
-
-class AddServer(StatesGroup):
-    waiting_for_ip = State()
-    waiting_for_password = State()
 
 class Base(DeclarativeBase):
     pass
