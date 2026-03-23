@@ -30,11 +30,12 @@ async def command_start_handler(message: Message) -> None:
             new_user = User(user_id=message.from_user.id)
             session.add(new_user)
             await session.commit()
-            logging.info(f'User {message.from_user.full_name} added!')
+            logging.info(f'User {message.from_user.full_name} added')
         else:
-            logging.info('User in base!')
+            logging.info('User in base')
 
-    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
+    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}! \n"
+                         f"Send >>> /servers")
 
 
 @router.message(F.text.lower() == 'add server')
@@ -106,14 +107,21 @@ async def info_server(callback: CallbackQuery):
             return await callback.answer("Server not found", show_alert=True)
 
     await callback.message.answer(f"Check server: {server.ip}")
-    data = []
     runner = await ping_server(server)
+    result = {}
     for event in runner.events:
         if event.get('event') == 'runner_on_ok':
-            data.append(event['event_data']['res'])
+            task_name = event['event_data']['task']
+            res = event['event_data']['res']
+
+            if task_name == 'ping test':
+                result['ping'] = res['ping']
+
+            elif task_name == 'uptime server':
+                result['uptime'] = res['stdout']
     await callback.message.answer(f"✅ {server.ip} \n\n"
-                                  f"Ping: {data[0]['ping']} \n"
-                                  f"Uptime: {data[1]['stdout']}"
+                                  f"Ping: {result['ping']} \n"
+                                  f"Uptime: {result['uptime']}"
                                   if runner.rc == 0 else "Error")
 
     return await callback.answer()

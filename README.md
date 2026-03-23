@@ -11,7 +11,9 @@ Telegram bot for monitoring and managing servers via Ansible.
 ## Tech Stack
 - Python (aiogram)
 - PostgreSQL (SQLAlchemy)
+- Python linter (Ruff)
 - Ansible
+
 
 ## Usage
 1. Start bot with /start
