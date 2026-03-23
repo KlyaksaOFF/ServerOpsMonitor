@@ -10,7 +10,7 @@ from engine_sql.db import async_session
 from engine_sql.fsm_states import AddServer
 from engine_sql.models import ServerList, User
 
-from .check_server import ping_server
+from .check_server import check_server
 from .validate import ValidateIP
 
 router = Router()
@@ -107,21 +107,21 @@ async def info_server(callback: CallbackQuery):
             return await callback.answer("Server not found", show_alert=True)
 
     await callback.message.answer(f"Check server: {server.ip}")
-    runner = await ping_server(server)
-    result = {}
+    runner = await check_server(server)
+    result_check_server = {}
     for event in runner.events:
         if event.get('event') == 'runner_on_ok':
             task_name = event['event_data']['task']
             res = event['event_data']['res']
 
             if task_name == 'ping test':
-                result['ping'] = res['ping']
+                result_check_server['ping'] = res['ping']
 
             elif task_name == 'uptime server':
-                result['uptime'] = res['stdout']
+                result_check_server['uptime'] = res['stdout']
     await callback.message.answer(f"✅ {server.ip} \n\n"
-                                  f"Ping: {result['ping']} \n"
-                                  f"Uptime: {result['uptime']}"
+                                  f"Ping: {result_check_server['ping']} \n"
+                                  f"Uptime: {result_check_server['uptime']}"
                                   if runner.rc == 0 else "Error")
 
     return await callback.answer()

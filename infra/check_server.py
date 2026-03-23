@@ -3,7 +3,7 @@ import asyncio
 from ansible_runner import run_async
 
 
-async def ping_server(server):
+async def check_server(server):
     thread, runner = run_async(
         inventory=server.ip,
         passwords={'password': server.password},
