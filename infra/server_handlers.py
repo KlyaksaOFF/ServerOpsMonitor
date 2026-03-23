@@ -1,5 +1,5 @@
 from .check_server import ping_server
-import logging
+from .validate import ValidateIP
 from sqlalchemy import select
 from aiogram import html, types, F, Router
 from aiogram.filters import CommandStart
@@ -8,7 +8,7 @@ from engine_sql.models import User, ServerList
 from engine_sql.fsm_states import  AddServer
 from engine_sql.db import async_session
 from aiogram.fsm.context import FSMContext
-from .validate import ValidateIP
+import logging
 
 router = Router()
 
