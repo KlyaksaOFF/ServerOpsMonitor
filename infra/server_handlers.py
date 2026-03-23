@@ -1,14 +1,17 @@
+import logging
+
+from aiogram import F, Router, html, types
+from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery, Message
+from sqlalchemy import select
+
+from engine_sql.db import async_session
+from engine_sql.fsm_states import AddServer
+from engine_sql.models import ServerList, User
+
 from .check_server import ping_server
 from .validate import ValidateIP
-from sqlalchemy import select
-from aiogram import html, types, F, Router
-from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery
-from engine_sql.models import User, ServerList
-from engine_sql.fsm_states import  AddServer
-from engine_sql.db import async_session
-from aiogram.fsm.context import FSMContext
-import logging
 
 router = Router()
 
@@ -17,7 +20,10 @@ router = Router()
 async def command_start_handler(message: Message) -> None:
     async with async_session() as session:
 
-        filter_result = await session.execute(select(User).filter_by(user_id=message.from_user.id))
+        filter_result = await session.execute(
+            select(User).filter_by(user_id=message.from_user.id)
+        )
+
         user = filter_result.scalar_one_or_none()
 
         if not user:
@@ -26,7 +32,7 @@ async def command_start_handler(message: Message) -> None:
             await session.commit()
             logging.info(f'User {message.from_user.full_name} added!')
         else:
-            logging.info(f'User in base!')
+            logging.info('User in base!')
 
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
 
@@ -41,32 +47,45 @@ async def add_server_start(message: types.Message, state: FSMContext):
 async def process_ip(message: types.Message, state: FSMContext):
     async with async_session() as session:
 
-        filter_result = await session.execute(select(ServerList).filter_by(ip=message.text, user_id=message.from_user.id))
+        filter_result = await session.execute(select(ServerList).filter_by(
+            ip=message.text, user_id=message.from_user.id)
+        )
+
         server = filter_result.scalar_one_or_none()
 
         if not server:
             validate_ip = ValidateIP(message.text)
             if validate_ip.validate():
                 await state.update_data(ip=message.text)
-                await message.answer(f'Send password for ip')
+                await message.answer('Send password for ip')
                 await state.set_state(AddServer.waiting_for_password)
             else:
-                await message.answer('The IP address is incorrect, please send the correct address')
+                await message.answer(
+                    'The IP address is incorrect, '
+                    'please send the correct address'
+                )
+
         else:
             logging.info('Server in db')
-            await message.answer(f'The server is on your list')
+            await message.answer('The server is on your list')
 
 
 @router.message(AddServer.waiting_for_password)
 async def process_password(message: types.Message, state: FSMContext):
     async with async_session() as session:
 
-            data = await state.get_data()
-            server = ServerList(password=message.text, user_id=message.from_user.id, ip=data['ip'], name='server')
-            session.add(server)
-            await session.commit()
-            await message.answer('New server created in db')
-            logging.info('Server created')
+        data = await state.get_data()
+
+        server = ServerList(
+            password=message.text,
+            user_id=message.from_user.id,
+            ip=data['ip'], name='server'
+        )
+
+        session.add(server)
+        await session.commit()
+        await message.answer('New server created in db')
+        logging.info('Server created')
 
     await state.clear()
 
@@ -77,7 +96,10 @@ async def info_server(callback: CallbackQuery):
     server_id = int(callback.data.split("_")[1])
 
     async with async_session() as session:
-        filter_result = await session.execute(select(ServerList).filter_by(id=server_id))
+        filter_result = await session.execute(
+            select(ServerList).filter_by(id=server_id)
+        )
+
         server = filter_result.scalar_one_or_none()
 
         if not server:

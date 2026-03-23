@@ -1,15 +1,17 @@
-from sqlalchemy import String, BigInteger
+from sqlalchemy import BigInteger, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
     pass
 
+
 class User(Base):
     __tablename__ = 'user_accounts'
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger)
     server_list_id: Mapped[float] = mapped_column(nullable=True)
+
 
 class ServerList(Base):
     __tablename__ = 'server_lists'

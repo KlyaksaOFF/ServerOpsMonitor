@@ -9,5 +9,6 @@ dependencies = [
     "ansible-runner>=2.4.3",
     "asyncpg>=0.31.0",
     "dotenv>=0.9.9",
+    "ruff>=0.15.7",
     "sqlalchemy>=2.0.48",
 ]
