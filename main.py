@@ -6,7 +6,7 @@ from os import getenv
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from infra.main_logic import router as router_main
+from infra.server_handlers import router as router_main
 from infra.keyboard import router as router_keyboard
 
 load_dotenv()
