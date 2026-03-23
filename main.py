@@ -6,8 +6,8 @@ from os import getenv
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from files.main_logic import router as router_main
-from files.keyboard import router as router_keyboard
+from infra.main_logic import router as router_main
+from infra.keyboard import router as router_keyboard
 
 load_dotenv()
 TOKEN = (getenv("BOT_TOKEN"))

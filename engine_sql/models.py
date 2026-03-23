@@ -1,7 +1,5 @@
-import asyncio
 from sqlalchemy import String, BigInteger
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from .db import engine
 
 
 class Base(DeclarativeBase):
@@ -21,11 +19,3 @@ class ServerList(Base):
     password: Mapped[str] = mapped_column(String(50))
     user_id: Mapped[int] = mapped_column(BigInteger)
 
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print('Table was successfully created!')
-
-
-if __name__ == "__main__":
-    asyncio.run(init_db())
