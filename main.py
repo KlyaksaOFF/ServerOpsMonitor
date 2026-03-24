@@ -8,6 +8,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 
+from engine_sql.db import init_db
 from infra.keyboard import router as router_keyboard
 from infra.server_handlers import router as router_main
 
@@ -20,6 +21,7 @@ dp.include_router(router_main)
 
 
 async def main() -> None:
+    await init_db()
     bot = Bot(
         token=TOKEN,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML))

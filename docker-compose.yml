@@ -1,0 +1,30 @@
+services:
+
+  appwork:
+    build: .
+    image: serverops-bot:latest
+    restart: always
+    environment:
+      PYTHONPATH: .
+      DATABASE_URL: postgresql+asyncpg://postgres:example@db:5432/my_database
+      DB_HOST: db
+      DB_NAME: my_database
+      DB_USER: postgres
+      DB_PASSWORD: example
+      BOT_TOKEN: ${BOT_TOKEN}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+     POSTGRES_DB: my_database
+     POSTGRES_USER: postgres
+     POSTGRES_PASSWORD: example
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
