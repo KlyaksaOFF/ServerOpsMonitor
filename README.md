@@ -1,4 +1,5 @@
 # ServerOps Monitor
+![CI](https://github.com/KlyaksaOFF/ServerOpsMonitor/actions/workflows/workflow.yml/badge.svg)
 
 Telegram bot for monitoring and managing servers via Ansible.
 
