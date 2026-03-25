@@ -13,7 +13,7 @@ Telegram bot for monitoring and managing servers via Ansible.
 - PostgreSQL (SQLAlchemy)
 - Python linter (Ruff)
 - Ansible
-
+- Docker
 
 ## Usage
 1. Start bot with /start
