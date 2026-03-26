@@ -16,7 +16,6 @@ class User(Base):
 class ServerList(Base):
     __tablename__ = 'server_lists'
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(10))
     ip: Mapped[str] = mapped_column(String(45))
     password: Mapped[str] = mapped_column(String(50))
     user_id: Mapped[int] = mapped_column(BigInteger)
