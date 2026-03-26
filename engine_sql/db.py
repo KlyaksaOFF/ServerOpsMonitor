@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from engine_sql.models import Base
 
 load_dotenv()
-TOKEN = (getenv("BOT_TOKEN"))
 
-engine = create_async_engine(getenv('DATABASE_URL'), echo=True)
+engine = create_async_engine(getenv("PSQL"), echo=True)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 

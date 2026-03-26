@@ -10,7 +10,7 @@ from engine_sql.db import async_session
 from engine_sql.fsm_states import AddServer
 from engine_sql.models import ServerList, User
 
-from .check_server import check_server
+from .ansible_check_server import check_server
 from .validate import ValidateIP
 
 router = Router()
@@ -47,17 +47,17 @@ async def add_server_start(message: types.Message, state: FSMContext):
 @router.message(AddServer.waiting_for_ip)
 async def process_ip(message: types.Message, state: FSMContext):
     async with async_session() as session:
-
+        server_ip = message.text.strip()
         filter_result = await session.execute(select(ServerList).filter_by(
-            ip=message.text, user_id=message.from_user.id)
+            ip=server_ip, user_id=message.from_user.id)
         )
 
         server = filter_result.scalar_one_or_none()
 
         if not server:
-            validate_ip = ValidateIP(message.text)
+            validate_ip = ValidateIP(server_ip)
             if validate_ip.validate():
-                await state.update_data(ip=message.text)
+                await state.update_data(ip=server_ip)
                 await message.answer('Send password for ip')
                 await state.set_state(AddServer.waiting_for_password)
             else:
