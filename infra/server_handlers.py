@@ -110,15 +110,16 @@ async def info_server(callback: CallbackQuery):
     runner = await check_server(server)
     result_check_server = {}
     for event in runner.events:
+        event_data = event.get('event_data')
         if event.get('event') == 'runner_on_ok':
-            task_name = event['event_data']['task']
-            res = event['event_data']['res']
+            task_name = event_data.get('task')
+            res = event_data.get('res')
 
             if task_name == 'ping test':
-                result_check_server['ping'] = res['ping']
+                result_check_server['ping'] = res.get('ping')
 
             elif task_name == 'uptime server':
-                result_check_server['uptime'] = res['stdout']
+                result_check_server['uptime'] = res.get('stdout')
     await callback.message.answer(f"✅ {server.ip} \n\n"
                                   f"Ping: {result_check_server['ping']} \n"
                                   f"Uptime: {result_check_server['uptime']}"
