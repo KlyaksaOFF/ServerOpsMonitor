@@ -22,6 +22,7 @@ async def check_server(server):
 
     return runner
 
+
 def take_data_check_server(runner):
     result_check_server = {}
     for event in runner.events:
