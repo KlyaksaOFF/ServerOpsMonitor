@@ -10,7 +10,7 @@ from engine_sql.db import async_session
 from engine_sql.fsm_states import AddServer
 from engine_sql.models import ServerList, User
 
-from .ansible_check_server import check_server
+from .ansible_check_server import check_server, take_data_check_server
 from .validate import ValidateIP
 
 router = Router()
@@ -89,22 +89,6 @@ async def process_password(message: types.Message, state: FSMContext):
         logging.info('Server created')
 
     await state.clear()
-
-
-def take_data_check_server(runner):
-    result_check_server = {}
-    for event in runner.events:
-        event_data = event.get('event_data')
-        if event.get('event') == 'runner_on_ok':
-            task_name = event_data.get('task')
-            res = event_data.get('res')
-
-            if task_name == 'ping test':
-                result_check_server['ping'] = res.get('ping')
-
-            elif task_name == 'uptime server':
-                result_check_server['uptime'] = res.get('stdout')
-    return result_check_server
 
 
 @router.callback_query(F.data.startswith("server_"))
