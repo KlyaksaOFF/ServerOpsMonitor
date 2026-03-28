@@ -30,6 +30,6 @@ async def result_ip(server, server_ip, state: FSMContext):
             return 'valid_ip'
         else:
             return 'invalid_ip'
-    #if server in db
+    # if server in db
     logging.info('Server in db')
     return 'ip_in_db'
