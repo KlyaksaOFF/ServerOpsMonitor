@@ -11,7 +11,7 @@ from engine_sql.fsm_states import AddServer
 from engine_sql.models import ServerList, User
 
 from .ansible_check_server import check_server, take_data_check_server
-from .validate import ValidateIP
+from .validate import result_ip
 
 router = Router()
 
@@ -54,20 +54,14 @@ async def process_ip(message: types.Message, state: FSMContext):
 
         server = filter_result.scalar_one_or_none()
 
-        if not server:
-            validate_ip = ValidateIP(server_ip)
-            if validate_ip.validate():
-                await state.update_data(ip=server_ip)
-                await message.answer('Send password for ip')
-                await state.set_state(AddServer.waiting_for_password)
-            else:
-                await message.answer(
-                    'The IP address is incorrect, '
-                    'please send the correct address'
-                )
-
+        result = await result_ip(server, server_ip, state)
+        if result == "valid_ip":
+            await message.answer('Send password for ip')
+        elif result == "invalid_ip":
+            await message.answer('The IP address is incorrect, '
+                'please send the correct address'
+            )
         else:
-            logging.info('Server in db')
             await message.answer('The server is on your list')
 
 
