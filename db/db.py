@@ -3,7 +3,7 @@ from os import getenv
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from engine_sql.models import Base
+from db.models import Base
 
 load_dotenv()
 

@@ -8,9 +8,9 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 
-from engine_sql.db import init_db
+from db.db import init_db
 from infra.keyboard import router as router_keyboard
-from infra.server_handlers import router as router_main
+from handlers.server import router as router_main
 
 load_dotenv()
 TOKEN = (getenv("BOT_TOKEN"))

@@ -39,7 +39,8 @@ def take_data_check_server(runner):
     return result_check_server
 
 
-def result_check_server(server, runner):
+async def result_check_server(server):
+    runner = await check_server(server)
     result_check_server = take_data_check_server(runner=runner)
     return (
         f"✅ {server.ip} \n\n"

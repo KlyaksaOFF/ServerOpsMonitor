@@ -3,8 +3,8 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from sqlalchemy import select
 
-from engine_sql.db import async_session
-from engine_sql.models import ServerList
+from db.db import async_session
+from db.models import ServerList
 
 router = Router()
 

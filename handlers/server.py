@@ -1,19 +1,17 @@
 import logging
 
-from aiogram import F, Router, html, types
-from aiogram.filters import CommandStart
+from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery
 from sqlalchemy import select
 
-from engine_sql.db import async_session
-from engine_sql.fsm_states import AddServer
-from engine_sql.models import ServerList, User
-from infra.ansible_check_server import (
-    check_server,
+from db.db import async_session
+from handlers.fsm_states import AddServer
+from db.models import ServerList
+from services.server_check import (
     result_check_server,
 )
-from infra.texts import (
+from texts.texts import (
     ENTER_IP,
     ERROR_INVALID_IP,
     NOT_SERVER,
@@ -21,31 +19,9 @@ from infra.texts import (
     SERVER_CREATED,
     SERVER_IN_YOUR_LIST,
 )
-from infra.validate import result_ip
+from utils.validate_ip import result_ip
 
 router = Router()
-
-
-@router.message(CommandStart())
-async def command_start_handler(message: Message) -> None:
-    async with async_session() as session:
-
-        filter_result = await session.execute(
-            select(User).filter_by(user_id=message.from_user.id)
-        )
-
-        user = filter_result.scalar_one_or_none()
-
-        if not user:
-            new_user = User(user_id=message.from_user.id)
-            session.add(new_user)
-            await session.commit()
-            logging.info(f'User {message.from_user.full_name} added')
-        else:
-            logging.info('User in base')
-
-    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}! \n"
-                         f"Send >>> /servers")
 
 
 @router.message(F.text.lower() == 'add server')
@@ -109,8 +85,6 @@ async def info_server(callback: CallbackQuery):
             return await callback.answer(NOT_SERVER, show_alert=True)
 
     await callback.message.answer(f"Check server: {server.ip}")
-    runner = await check_server(server)
-    await callback.message.answer(result_check_server(server=server,
-                                                      runner=runner))
+    await callback.message.answer(await result_check_server(server=server))
 
     return await callback.answer()
