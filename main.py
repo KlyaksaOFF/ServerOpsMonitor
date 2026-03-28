@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from db.db import init_db
 from handlers.server import router as router_main
-from infra.keyboard import router as router_keyboard
+from handlers.keyboard import router as router_keyboard
 
 load_dotenv()
 TOKEN = (getenv("BOT_TOKEN"))
