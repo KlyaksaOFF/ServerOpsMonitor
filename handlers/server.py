@@ -58,7 +58,7 @@ async def process_password(message: types.Message, state: FSMContext):
         server = ServerList(
             password=message.text,
             user_id=message.from_user.id,
-            ip=data['ip'],
+            ip=data.get('ip'),
         )
 
         session.add(server)

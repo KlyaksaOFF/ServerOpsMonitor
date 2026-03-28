@@ -7,7 +7,7 @@ from db.models import Base
 
 load_dotenv()
 
-engine = create_async_engine(getenv("DATABASE_URL"), echo=True)
+engine = create_async_engine(getenv("DATABASE_URL"), echo=False)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 

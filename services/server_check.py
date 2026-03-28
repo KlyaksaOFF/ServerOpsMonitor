@@ -44,7 +44,7 @@ async def result_check_server(server):
     result_check_server = take_data_check_server(runner=runner)
     return (
         f"✅ {server.ip} \n\n"
-        f"Ping: {result_check_server['ping']} \n"
-        f"Uptime: {result_check_server['uptime']}"
+        f"Ping: {result_check_server.get('ping')} \n"
+        f"Uptime: {result_check_server.get('uptime')}"
         if runner.rc == 0 else "Error"
     )
