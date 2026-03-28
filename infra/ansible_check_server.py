@@ -37,3 +37,13 @@ def take_data_check_server(runner):
             elif task_name == 'uptime server':
                 result_check_server['uptime'] = res.get('stdout')
     return result_check_server
+
+
+def result_check_server(server, runner):
+    result_check_server = take_data_check_server(runner=runner)
+    return (
+        f"✅ {server.ip} \n\n"
+        f"Ping: {result_check_server['ping']} \n"
+        f"Uptime: {result_check_server['uptime']}"
+        if runner.rc == 0 else "Error"
+    )

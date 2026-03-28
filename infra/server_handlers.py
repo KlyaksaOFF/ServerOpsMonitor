@@ -9,9 +9,19 @@ from sqlalchemy import select
 from engine_sql.db import async_session
 from engine_sql.fsm_states import AddServer
 from engine_sql.models import ServerList, User
-
-from .ansible_check_server import check_server, take_data_check_server
-from .validate import result_ip
+from infra.ansible_check_server import (
+    check_server,
+    result_check_server,
+)
+from infra.texts import (
+    ENTER_IP,
+    ERROR_INVALID_IP,
+    NOT_SERVER,
+    SEND_PASSWORD,
+    SERVER_CREATED,
+    SERVER_IN_YOUR_LIST,
+)
+from infra.validate import result_ip
 
 router = Router()
 
@@ -40,7 +50,7 @@ async def command_start_handler(message: Message) -> None:
 
 @router.message(F.text.lower() == 'add server')
 async def add_server_start(message: types.Message, state: FSMContext):
-    await message.answer('Enter the server IP')
+    await message.answer(ENTER_IP)
     await state.set_state(AddServer.waiting_for_ip)
 
 
@@ -56,13 +66,11 @@ async def process_ip(message: types.Message, state: FSMContext):
 
         result = await result_ip(server, server_ip, state)
         if result == "valid_ip":
-            await message.answer('Send password for ip')
+            await message.answer(SEND_PASSWORD)
         elif result == "invalid_ip":
-            await message.answer('The IP address is incorrect, '
-                'please send the correct address'
-            )
+            await message.answer(ERROR_INVALID_IP)
         else:
-            await message.answer('The server is on your list')
+            await message.answer(SERVER_IN_YOUR_LIST)
 
 
 @router.message(AddServer.waiting_for_password)
@@ -79,7 +87,7 @@ async def process_password(message: types.Message, state: FSMContext):
 
         session.add(server)
         await session.commit()
-        await message.answer('New server created in db')
+        await message.answer(SERVER_CREATED)
         logging.info('Server created')
 
     await state.clear()
@@ -98,15 +106,11 @@ async def info_server(callback: CallbackQuery):
         server = filter_result.scalar_one_or_none()
 
         if not server:
-            return await callback.answer("Server not found", show_alert=True)
+            return await callback.answer(NOT_SERVER, show_alert=True)
 
     await callback.message.answer(f"Check server: {server.ip}")
     runner = await check_server(server)
-    result_check_server = take_data_check_server(runner)
-    await callback.message.answer(f"✅ {server.ip} \n\n"
-                                  f"Ping: {result_check_server['ping']} \n"
-                                  f"Uptime: {result_check_server['uptime']}"
-                                  if runner.rc == 0 else "Error")
+    await callback.message.answer(result_check_server(server=server,
+                                                      runner=runner))
 
     return await callback.answer()
-
