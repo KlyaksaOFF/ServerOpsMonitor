@@ -3,11 +3,9 @@ import logging
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
-from sqlalchemy import select
 
-from db.db import async_session
-from db.models import ServerList
 from handlers.fsm_states import AddServer
+from repositories.server_repository import get_server_by_id, create_server, process_add_server
 from services.server_check import (
     result_check_server,
 )
@@ -19,7 +17,6 @@ from texts.texts import (
     SERVER_CREATED,
     SERVER_IN_YOUR_LIST,
 )
-from utils.validate_ip import result_ip
 
 router = Router()
 
@@ -32,15 +29,10 @@ async def add_server_start(message: types.Message, state: FSMContext):
 
 @router.message(AddServer.waiting_for_ip)
 async def process_ip(message: types.Message, state: FSMContext):
-    async with async_session() as session:
         server_ip = message.text.strip()
-        filter_result = await session.execute(select(ServerList).filter_by(
-            ip=server_ip, user_id=message.from_user.id)
-        )
+        user_id = message.from_user.id
 
-        server = filter_result.scalar_one_or_none()
-
-        result = await result_ip(server, server_ip, state)
+        result = await process_add_server(server_ip=server_ip, user_id=user_id, state=state)
         if result == "valid_ip":
             await message.answer(SEND_PASSWORD)
         elif result == "invalid_ip":
@@ -51,20 +43,9 @@ async def process_ip(message: types.Message, state: FSMContext):
 
 @router.message(AddServer.waiting_for_password)
 async def process_password(message: types.Message, state: FSMContext):
-    async with async_session() as session:
-
-        data = await state.get_data()
-
-        server = ServerList(
-            password=message.text,
-            user_id=message.from_user.id,
-            ip=data.get('ip'),
-        )
-
-        session.add(server)
-        await session.commit()
-        await message.answer(SERVER_CREATED)
-        logging.info('Server created')
+    await create_server(state=state, user_id=message.from_user.id, password=message.text)
+    await message.answer(SERVER_CREATED)
+    logging.info('Server created')
 
     await state.clear()
 
@@ -74,15 +55,10 @@ async def info_server(callback: CallbackQuery):
 
     server_id = int(callback.data.split("_")[1])
 
-    async with async_session() as session:
-        filter_result = await session.execute(
-            select(ServerList).filter_by(id=server_id)
-        )
+    server = await get_server_by_id(server_id)
 
-        server = filter_result.scalar_one_or_none()
-
-        if not server:
-            return await callback.answer(NOT_SERVER, show_alert=True)
+    if not server:
+        return await callback.answer(NOT_SERVER, show_alert=True)
 
     await callback.message.answer(f"Check server: {server.ip}")
     await callback.message.answer(await result_check_server(server=server))
