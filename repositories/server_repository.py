@@ -15,15 +15,13 @@ async def get_server_by_id(server_id):
         return filter_result.scalar_one_or_none()
 
 
-async def create_server(state: FSMContext, password, user_id):
+async def create_server(ip, password, user_id):
     async with async_session() as session:
-
-        data = await state.get_data()
 
         server = ServerList(
             password=password,
             user_id=user_id,
-            ip=data.get('ip'),
+            ip=ip,
         )
 
         session.add(server)

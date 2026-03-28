@@ -51,7 +51,8 @@ async def process_ip(message: types.Message, state: FSMContext):
 
 @router.message(AddServer.waiting_for_password)
 async def process_password(message: types.Message, state: FSMContext):
-    await create_server(state=state,
+    data = await state.get_data()
+    await create_server(ip=data.get('ip'),
                         user_id=message.from_user.id,
                         password=message.text)
     await message.answer(SERVER_CREATED)
