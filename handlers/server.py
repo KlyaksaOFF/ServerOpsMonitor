@@ -6,8 +6,8 @@ from aiogram.types import CallbackQuery
 from sqlalchemy import select
 
 from db.db import async_session
-from handlers.fsm_states import AddServer
 from db.models import ServerList
+from handlers.fsm_states import AddServer
 from services.server_check import (
     result_check_server,
 )
