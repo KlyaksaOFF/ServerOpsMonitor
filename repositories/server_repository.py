@@ -3,9 +3,7 @@ from sqlalchemy import select
 
 from db.db import async_session
 from db.models import ServerList
-
 from utils.validate_ip import result_ip
-
 
 
 async def get_server_by_id(server_id):
@@ -15,6 +13,7 @@ async def get_server_by_id(server_id):
         )
 
         return filter_result.scalar_one_or_none()
+
 
 async def create_server(state: FSMContext, password, user_id):
     async with async_session() as session:
@@ -29,6 +28,7 @@ async def create_server(state: FSMContext, password, user_id):
 
         session.add(server)
         await session.commit()
+
 
 async def process_add_server(server_ip, user_id, state: FSMContext):
     async with async_session() as session:
