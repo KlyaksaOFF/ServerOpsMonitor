@@ -10,11 +10,11 @@ install:
 build:
 	docker compose up --build -d
 
-bot start:
-	uv run python bot_main.py
+bot-start:
+	uv run python -m bot.bot_main
 
-api start:
-	uv run python api_main.py
+api-start:
+	uv run python api/api_main.py
 
 docker-logs:
 	docker compose logs -f appwork

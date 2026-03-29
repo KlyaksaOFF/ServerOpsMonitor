@@ -10,3 +10,21 @@ router = APIRouter()
 async def index(request: Request):
     return templates.TemplateResponse(name='index.html',
                                       request=request)
+
+
+@router.post('/login', response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse(name='login.html',
+                                      request=request)
+
+
+@router.get('/main_menu', response_class=HTMLResponse)
+async def main_menu(request: Request):
+    return templates.TemplateResponse(name='main_menu.html',
+                                      request=request)
+
+
+@router.get('/servers', response_class=HTMLResponse)
+async def servers(request: Request):
+    return templates.TemplateResponse(name='servers.html',
+                                      request=request)

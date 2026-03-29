@@ -9,6 +9,7 @@ dependencies = [
     "ansible-runner>=2.4.3",
     "asyncpg>=0.31.0",
     "dotenv>=0.9.9",
+    "fastapi-users>=15.0.5",
     "fastapi[standart]>=0.135.2",
     "jinja2>=3.1.6",
     "ruff>=0.15.7",
