@@ -1,59 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>ServerOps Monitor | Вход</title>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212; /* Темная тема для соответствия кнопке */
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            color: white;
         }
 
         .container {
-            background: white;
+            background: #1e1e1e;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
-            width: 320px;
+            width: 350px;
+            border: 1px solid #333;
         }
 
         h1 {
             margin-bottom: 10px;
+            font-size: 26px;
+            letter-spacing: -0.5px;
         }
 
         p {
-            color: #555;
-            margin-bottom: 25px;
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 14px;
         }
 
-        .btn {
-            display: block;
-            text-decoration: none;
-            background: #222;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            transition: 0.2s;
+        #telegram-login-container {
+            display: flex;
+            justify-content: center;
+            min-height: 40px;
+            transition: opacity 0.3s;
         }
 
-        .btn:hover {
-            background: #444;
+        /* Если кнопка не грузится, покажем текст */
+        .loading-text {
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ServerOps Monitor</h1>
-        <p>Manage and monitor your servers easily</p>
 
-        <a href="/login" class="btn">Login</a>
+<div class="container">
+    <h1>ServerOps Monitor</h1>
+    <p>Авторизуйтесь через Telegram для доступа к панели</p>
+
+    <div id="telegram-login-container">
+        <script async
+                src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="klyaksaworkai_bot"
+                data-size="large"
+                data-userpic="false"
+                data-onauth="onTelegramAuth(user)"
+                data-request-access="write">
+        </script>
     </div>
+</div>
+
+<script type="text/javascript">
+    function onTelegramAuth(user) {
+        console.log("Данные от TG:", user);
+
+        fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/main_menu";
+            } else {
+                alert("Ошибка сервера при проверке данных.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Ошибка сети или сервера.");
+        });
+    }
+
+    setTimeout(() => {
+        const iframe = document.querySelector('iframe[id^="telegram-login"]');
+        if (!iframe) {
+            console.error("Виджет не загрузился. Проверьте домен в @BotFather.");
+        }
+    }, 5000);
+</script>
+
 </body>
 </html>
