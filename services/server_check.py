@@ -2,6 +2,8 @@ import asyncio
 
 from ansible_runner import run_async
 
+from repositories.server_repository import added_ping_in_table
+
 
 async def check_server(server):
     thread, runner = run_async(
@@ -42,9 +44,12 @@ def take_data_check_server(runner):
 async def result_check_server(server):
     runner = await check_server(server)
     result_check_server = take_data_check_server(runner=runner)
+    uptime = result_check_server.get('uptime')
+    ping = result_check_server.get('ping')
+    await added_ping_in_table(server, ping)
     return (
         f"✅ {server.ip} \n\n"
-        f"Ping: {result_check_server.get('ping')} \n"
-        f"Uptime: {result_check_server.get('uptime')}"
+        f"Ping: {ping} \n"
+        f"Uptime: {uptime}"
         if runner.rc == 0 else "Error"
     )

@@ -56,9 +56,17 @@
             font-size: 14px;
             padding: 6px 10px;
             border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .status-green {
             background: #22c55e;
             color: #022c22;
-            font-weight: 600;
+        }
+
+        .status-red {
+            background: #ef4444;
+            color: #450a0a;
         }
 
         .empty {
@@ -78,7 +86,21 @@
         <div class="server-list">
             {% for server in servers %}
                 <div class="server-card">
-                    <div class="server-ip">{{ server.ip }}</div>
+
+                    <div class="server-ip">
+                        {{ server.ip }}
+                    </div>
+
+                    <div class="status
+                        {% if server.ping == 'pong' %}
+                            status-green
+                        {% else %}
+                            status-red
+                        {% endif %}
+                    ">
+                        {{ server.ping if server.ping else "unknown" }}
+                    </div>
+
                 </div>
             {% endfor %}
         </div>

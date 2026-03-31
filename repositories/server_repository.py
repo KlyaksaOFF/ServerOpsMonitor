@@ -1,5 +1,5 @@
 from aiogram.fsm.context import FSMContext
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from db.db import async_session
 from db.models import ServerList
@@ -49,3 +49,11 @@ async def process_add_server(server_ip, user_id, state: FSMContext):
 
         result = await result_ip(server, server_ip, state)
         return result
+
+
+async def added_ping_in_table(server, ping):
+    async with async_session() as session:
+        await session.execute(update(ServerList).where(ServerList.ip == server.ip)
+        .values(ping=ping))
+        await session.commit()
+
