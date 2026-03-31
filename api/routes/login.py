@@ -32,7 +32,7 @@ auth_backend = AuthenticationBackend(
 
 async def add_cookie_user_login(user_id: int, response: Response):
     response.set_cookie(
-        key="tg_user_id",
+        key="user_id",
         value=str(user_id),
         httponly=True,
         max_age=3600

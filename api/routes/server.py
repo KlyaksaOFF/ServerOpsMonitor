@@ -1,17 +1,24 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
+from os import getenv
 
+from dotenv import load_dotenv
 from .login import add_cookie_user_login, verify_telegram_data
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
 
+load_dotenv()
 
+telegram_bot_login = (getenv("BOT_LOGIN"))
 @router.get('/', response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse(name='index.html',
-                                      request=request)
+    return templates.TemplateResponse(
+    name='index.html',
+    request=request,
+    context={'telegram_bot_login': telegram_bot_login}
+    )
 
 
 @router.post('/login')
