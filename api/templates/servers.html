@@ -3,10 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <title>Servers</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .server-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .server-card {
+            background: #1e293b;
+            padding: 16px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s ease;
+            border: 1px solid #334155;
+        }
+
+        .server-card:hover {
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .server-ip {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .status {
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #22c55e;
+            color: #022c22;
+            font-weight: 600;
+        }
+
+        .empty {
+            text-align: center;
+            opacity: 0.6;
+            margin-top: 40px;
+        }
+    </style>
 </head>
+
 <body>
-    {% for server in servers %}
-        <li>{{ server.ip }}</li>
-    {% endfor %}
+
+<div class="container">
+    <h1>🖥️ Servers</h1>
+
+    {% if servers %}
+        <div class="server-list">
+            {% for server in servers %}
+                <div class="server-card">
+                    <div class="server-ip">{{ server.ip }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">No servers added yet</div>
+    {% endif %}
+</div>
+
 </body>
 </html>
