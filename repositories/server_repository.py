@@ -6,6 +6,17 @@ from db.models import ServerList
 from utils.validate_ip import result_ip
 
 
+async def list_user_connected_servers(user_id):
+    async with async_session() as session:
+
+        filter_result = await session.execute(
+            select(ServerList).filter_by(user_id=user_id)
+        )
+
+        servers = filter_result.scalars().all()
+    return servers
+
+
 async def get_server_by_id(server_id):
     async with async_session() as session:
         filter_result = await session.execute(

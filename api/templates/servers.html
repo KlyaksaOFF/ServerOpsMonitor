@@ -5,6 +5,8 @@
     <title>Servers</title>
 </head>
 <body>
-
+    {% for server in servers %}
+        <li>{{ server.ip }}</li>
+    {% endfor %}
 </body>
 </html>

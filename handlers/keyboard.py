@@ -1,35 +1,28 @@
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from sqlalchemy import select
 
-from db.db import async_session
-from db.models import ServerList
+from repositories.server_repository import list_user_connected_servers
 
 router = Router()
 
 
 @router.message(F.text.lower() == 'list connected servers')
 async def connected_servers(message: types.Message):
-    async with async_session() as session:
+    user_id = message.from_user.id
+    servers = await list_user_connected_servers(user_id)
 
-        filter_result = await session.execute(
-            select(ServerList).filter_by(user_id=message.from_user.id)
-        )
+    if not servers:
+        return await message.answer("You don't have servers")
 
-        servers = filter_result.scalars().all()
+    buttons = []
 
-        if not servers:
-            return await message.answer("You don't have servers")
+    for server in servers:
+        buttons.append([types.InlineKeyboardButton(text=server.ip,
+                                                    callback_data=f'server_{server.id}')])
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
 
-        buttons = []
-
-        for server in servers:
-            buttons.append([types.InlineKeyboardButton(text=server.ip,
-                                                       callback_data=f'server_{server.id}')])
-        keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
-
-        return await message.answer("Select server", reply_markup=keyboard)
+    return await message.answer("Select server", reply_markup=keyboard)
 
 
 @router.message(Command('servers'))

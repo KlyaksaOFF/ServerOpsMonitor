@@ -5,7 +5,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 
-from .login import add_cookie_user_login, verify_telegram_data
+from api.routes.login import add_cookie_user_login, verify_telegram_data
+from repositories.server_repository import list_user_connected_servers
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -28,8 +29,9 @@ async def index(request: Request):
 async def login(user: dict, response: Response):
     result = await verify_telegram_data(user)
     if result:
-        await add_cookie_user_login(user_id=user.get('id'), response=response)
-        return {'status': 'ok', "user": user['first_name']}
+        user_id = user.get('id')
+        await add_cookie_user_login(user_id=user_id, response=response)
+        return {'status': 'ok', "user": user.get('first_name')}
     response.status_code = 401
     return {'status': 'Error', 'message': 'Invalid data'}
 
@@ -42,5 +44,8 @@ async def main_menu(request: Request):
 
 @router.get('/servers', response_class=HTMLResponse)
 async def servers(request: Request):
+    user_id = int(request.cookies.get("user_id"))
+    servers = await list_user_connected_servers(user_id)
     return templates.TemplateResponse(name='servers.html',
-                                      request=request)
+                                      request=request,
+                                      context={'servers': servers})
