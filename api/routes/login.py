@@ -40,15 +40,15 @@ async def add_cookie_user_login(user_id: int, response: Response):
     return {"status": "ok", "message": "Logged in"}
 
 
-async def verify_telegram_data(data: dict):
-    received_hash = data.get('hash')
+async def verify_telegram_data(user_data: dict):
+    received_hash = user_data.get('hash')
 
     if not received_hash:
         return False
 
     auth_data = []
 
-    for key, value in sorted(data.items()):
+    for key, value in sorted(user_data.items()):
         if key != 'hash':
             auth_data.append(f"{key}={value}")
 

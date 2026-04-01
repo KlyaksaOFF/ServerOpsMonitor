@@ -87,9 +87,12 @@
             {% for server in servers %}
                 <div class="server-card">
 
-                    <div class="server-ip">
-                        {{ server.ip }}
-                    </div>
+                <div class="server-ip">
+                    <span style="opacity: 0.6; margin-right: 10px;">
+                        #{{ server.id }}
+                    </span>
+                    {{ server.ip }}
+                </div>
 
                     <div class="status
                         {% if server.ping == 'pong' %}
