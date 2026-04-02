@@ -6,7 +6,10 @@ from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
-from repositories.server_repository import list_user_connected_servers, get_server_by_id
+from repositories.server_repository import (
+    get_server_by_id,
+    list_user_connected_servers,
+)
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -46,12 +49,18 @@ async def main_menu(request: Request):
 async def servers(request: Request):
     user_id = int(request.cookies.get("user_id"))
     servers = await list_user_connected_servers(user_id)
-    return templates.TemplateResponse(name='servers.html',
-                                      request=request,
-                                      context={'servers': servers, 'user_id': user_id})
+    return templates.TemplateResponse(
+        name='servers.html',
+        request=request,
+        context={'servers': servers, 'user_id': user_id}
+    )
+
 
 @router.get('/servers/{user_id}/{server_id}', response_class=HTMLResponse)
 async def info_server(user_id: int, server_id: int, request: Request):
     server = await get_server_by_id(server_id)
-    return templates.TemplateResponse(name='info_server.html',
-                                      request=request, context={'user_id': user_id, 'server': server})
+    return templates.TemplateResponse(
+        name='info_server.html',
+        request=request,
+        context={'user_id': user_id, 'server': server}
+    )
