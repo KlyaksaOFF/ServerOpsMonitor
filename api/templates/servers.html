@@ -50,6 +50,19 @@
         .server-ip {
             font-size: 16px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .server-link {
+            color: #38bdf8;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .server-link:hover {
+            text-decoration: underline;
+            color: #60a5fa;
         }
 
         .status {
@@ -87,12 +100,17 @@
             {% for server in servers %}
                 <div class="server-card">
 
-                <div class="server-ip">
-                    <span style="opacity: 0.6; margin-right: 10px;">
-                        #{{ server.id }}
-                    </span>
-                    {{ server.ip }}
-                </div>
+                    <div class="server-ip">
+                        <span style="opacity: 0.6; margin-right: 10px;">
+                            #{{ server.id }}
+                        </span>
+
+                        <a href="/servers/{{ user_id }}/{{ server.id }}"
+                           target="_blank"
+                           class="server-link">
+                            {{ server.ip }}
+                        </a>
+                    </div>
 
                     <div class="status
                         {% if server.ping == 'pong' %}

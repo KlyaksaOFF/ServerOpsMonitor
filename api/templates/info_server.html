@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Server Info</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .label {
+            opacity: 0.6;
+        }
+
+        .value {
+            font-weight: 500;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .green {
+            background: #22c55e;
+            color: #022c22;
+        }
+
+        .red {
+            background: #ef4444;
+            color: #450a0a;
+        }
+
+        .unknown {
+            background: #64748b;
+            color: #0f172a;
+        }
+
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-back {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn-back:hover {
+            background: #475569;
+        }
+
+        .btn-action {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-action:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🖥️ Server #{{ server.id }}</h1>
+
+    <div class="card">
+
+        <div class="row">
+            <div class="label">IP Address</div>
+            <div class="value">{{ server.ip }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">User ID</div>
+            <div class="value">{{ user_id }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Server ID</div>
+            <div class="value">{{ server.id }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Status</div>
+            <div class="value">
+                <span class="status
+                    {% if server.ping == 'pong' %}
+                        green
+                    {% elif server.ping %}
+                        red
+                    {% else %}
+                        unknown
+                    {% endif %}
+                ">
+                    {{ server.ping if server.ping else "unknown" }}
+                </span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/servers" class="btn btn-back">← Back</a>
+
+            <a href="#" class="btn btn-action">Ping</a>
+            <a href="#" class="btn btn-action">Uptime</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
