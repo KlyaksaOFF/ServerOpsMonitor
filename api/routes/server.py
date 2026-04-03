@@ -3,9 +3,8 @@ from os import getenv
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
@@ -67,6 +66,7 @@ async def info_server(user_id: int, server_id: int, request: Request):
         request=request,
         context={'user_id': user_id, 'server': server}
     )
+
 
 @router.post('/servers/{user_id}/{server_id}')
 async def check_server(user_id: int, server_id: int):
