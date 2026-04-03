@@ -51,10 +51,10 @@ async def process_add_server(server_ip, user_id, state: FSMContext):
         return result
 
 
-async def added_ping_in_table(server, ping):
+async def added_check_in_table_server(server, ping, uptime):
     async with async_session() as session:
         await session.execute(update(ServerList).where(ServerList.ip
                                                        == server.ip)
-        .values(ping=ping))
+        .values(ping=ping, uptime=uptime))
         await session.commit()
 

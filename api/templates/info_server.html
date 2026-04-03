@@ -143,6 +143,17 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="label">Uptime</div>
+            <div class="value">
+                {% if server.uptime %}
+                    {{ server.uptime }}
+                {% else %}
+                    unknown
+                {% endif %}
+            </div>
+        </div>
+
         <div class="actions">
             <a href="/servers" class="btn btn-back">← Back</a>
 
