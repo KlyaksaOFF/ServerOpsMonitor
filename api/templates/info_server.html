@@ -157,8 +157,11 @@
         <div class="actions">
             <a href="/servers" class="btn btn-back">← Back</a>
 
-            <a href="#" class="btn btn-action">Ping</a>
-            <a href="#" class="btn btn-action">Uptime</a>
+            <form method="post" action="/servers/{{ user_id }}/{{ server.id }}" style="display:inline;">
+                <button type="submit" class="btn btn-action">
+                    Check server
+                </button>
+            </form>
         </div>
 
     </div>

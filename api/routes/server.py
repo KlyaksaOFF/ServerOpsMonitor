@@ -1,15 +1,18 @@
+import asyncio
 from os import getenv
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
     get_server_by_id,
     list_user_connected_servers,
 )
+from services.server_check import result_check_server
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -64,3 +67,14 @@ async def info_server(user_id: int, server_id: int, request: Request):
         request=request,
         context={'user_id': user_id, 'server': server}
     )
+
+@router.post('/servers/{user_id}/{server_id}')
+async def check_server(user_id: int, server_id: int):
+    server = await get_server_by_id(server_id)
+    if server:
+        asyncio.create_task(result_check_server(server=server))
+        return RedirectResponse(
+            url=f'/servers/{user_id}/{server_id}',
+            status_code=303
+        )
+    return {'status': 'Error', 'message': 'Invalid data'}
