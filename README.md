@@ -1,7 +1,7 @@
-# ServerOps Monitor
+# ServerOpsMonitor
 ![CI](https://github.com/KlyaksaOFF/ServerOpsMonitor/actions/workflows/workflow.yml/badge.svg)
 
-ServerOps Monitor
+ServerOpsMonitor
 
 A professional Telegram bot and web interface designed for monitoring and managing Linux servers using Ansible. This tool allows you to track server health and execute remote checks directly from your mobile device or browser.
 🚀 Key Features
