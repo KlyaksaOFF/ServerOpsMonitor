@@ -6,7 +6,7 @@ ServerOpsMonitor
 A professional Telegram bot and web interface designed for monitoring and managing Linux servers using Ansible. This tool allows you to track server health and execute remote checks directly from your mobile device or browser.
 🚀 Key Features
 
-    Telegram Management: Add, view servers via a native Telegram interface.
+    Telegram Management: Add, view, remove servers via a native Telegram interface.
 
     Automated Health Checks: Run ping and uptime checks using Ansible modules.
 
