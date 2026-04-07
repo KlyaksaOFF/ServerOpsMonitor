@@ -58,3 +58,9 @@ async def added_check_in_table_server(server, ping, uptime):
         .values(ping=ping, uptime=uptime))
         await session.commit()
 
+
+async def remove_server_by_id(server_id):
+    server = await get_server_by_id(server_id)
+    async with async_session() as session:
+        await session.delete(server)
+        await session.commit()

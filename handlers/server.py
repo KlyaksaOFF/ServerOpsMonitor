@@ -3,12 +3,14 @@ import logging
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
+from sqlalchemy.orm.exc import UnmappedInstanceError
 
 from handlers.fsm_states import AddServer
 from repositories.server_repository import (
     create_server,
     get_server_by_id,
     process_add_server,
+    remove_server_by_id,
 )
 from services.server_check import (
     result_check_server,
@@ -73,5 +75,20 @@ async def info_server(callback: CallbackQuery):
 
     await callback.message.answer(f"Check server: {server.ip}")
     await callback.message.answer(await result_check_server(server=server))
+
+    return await callback.answer()
+
+
+@router.callback_query(F.data.startswith("remove_"))
+async def remove_server(callback: CallbackQuery):
+    try:
+        server_id = int(callback.data.split("_")[1])
+
+        await remove_server_by_id(server_id)
+
+        await callback.message.answer('Server removed')
+
+    except UnmappedInstanceError:
+        await callback.message.answer('The server has already been deleted')
 
     return await callback.answer()

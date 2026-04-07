@@ -18,8 +18,12 @@ async def connected_servers(message: types.Message):
     buttons = []
 
     for server in servers:
-        buttons.append([types.InlineKeyboardButton(text=server.ip,
-                                                    callback_data=f'server_{server.id}')])
+        buttons.append([types.InlineKeyboardButton(
+            text=server.ip, callback_data=f'server_{server.id}'
+        ),
+                        types.InlineKeyboardButton(
+                            text='remove', callback_data=f'remove_{server.id}')]
+        )
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
 
     return await message.answer("Select server", reply_markup=keyboard)
@@ -29,7 +33,7 @@ async def connected_servers(message: types.Message):
 async def menu_servers(message: types.Message, state: FSMContext):
     await state.clear()
     buttons = [[types.KeyboardButton(text='Add server'),
-    types.KeyboardButton(text='List connected servers')],]
+    types.KeyboardButton(text='List connected servers')]]
 
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=buttons,
