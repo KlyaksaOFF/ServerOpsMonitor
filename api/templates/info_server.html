@@ -72,18 +72,29 @@
         .actions {
             margin-top: 25px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .inline-form {
+            margin: 0;
         }
 
         .btn {
-            padding: 10px 14px;
-            border-radius: 8px;
-            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 600;
-            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
         }
 
+        /* BACK */
         .btn-back {
             background: #334155;
             color: #e2e8f0;
@@ -91,15 +102,37 @@
 
         .btn-back:hover {
             background: #475569;
+            transform: translateY(-1px);
         }
 
-        .btn-action {
-            background: #3b82f6;
+        /* CHECK */
+        .btn-check {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        .btn-action:hover {
-            background: #2563eb;
+        .btn-check:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        /* DELETE */
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
         }
     </style>
 </head>
@@ -157,11 +190,27 @@
         <div class="actions">
             <a href="/servers" class="btn btn-back">← Back</a>
 
-            <form method="post" action="/servers/{{ user_id }}/{{ server.id }}" style="display:inline;">
-                <button type="submit" class="btn btn-action">
-                    Check server
+            <form method="post" action="/servers/{{ user_id }}/{{ server.id }}" class="inline-form">
+                <button type="submit" class="btn btn-check">
+                    ⚡ Check server
                 </button>
             </form>
+
+            <button
+                class="btn btn-delete"
+                onclick="deleteServer({{ user_id }}, {{ server.id }})"
+            >
+                🗑 Remove
+            </button>
+
+            <script>
+            async function deleteServer(userId, serverId) {
+                await fetch(`/servers/${userId}/${serverId}`, {
+                    method: 'DELETE'
+                });
+                window.location.href = '/servers';
+            }
+            </script>
         </div>
 
     </div>

@@ -10,6 +10,7 @@ from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
     get_server_by_id,
     list_user_connected_servers,
+    remove_server_by_id,
 )
 from services.server_check import result_check_server
 
@@ -78,3 +79,9 @@ async def check_server(user_id: int, server_id: int):
             status_code=303
         )
     return {'status': 'Error', 'message': 'Invalid data'}
+
+
+@router.delete('/servers/{user_id}/{server_id}')
+async def remove_server(user_id: int, server_id: int):
+    await remove_server_by_id(server_id)
+    return RedirectResponse(url='/servers', status_code=303)
