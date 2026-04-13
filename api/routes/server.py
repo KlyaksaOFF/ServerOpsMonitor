@@ -1,13 +1,15 @@
 import asyncio
 from os import getenv
+from typing import Annotated
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
+    create_server,
     get_server_by_id,
     list_user_connected_servers,
     remove_server_by_id,
@@ -59,14 +61,21 @@ async def servers(request: Request):
     )
 
 
-@router.get('/servers/{user_id}/{server_id}', response_class=HTMLResponse)
-async def info_server(user_id: int, server_id: int, request: Request):
-    server = await get_server_by_id(server_id)
+@router.get('/servers/add')
+async def get_add_server(request: Request):
     return templates.TemplateResponse(
-        name='info_server.html',
-        request=request,
-        context={'user_id': user_id, 'server': server}
-    )
+        name='add_server.html', request=request)
+
+
+@router.post('/servers/add')
+async def post_add_server(
+        request: Request,
+        password: Annotated[str, Form()],
+        ip: Annotated[str, Form()]):
+
+    user_id = int(request.cookies.get("user_id"))
+    await create_server(user_id=int(user_id), password=password, ip=ip)
+    return RedirectResponse(url='/servers', status_code=303)
 
 
 @router.post('/servers/{user_id}/{server_id}')
@@ -85,3 +94,13 @@ async def check_server(user_id: int, server_id: int):
 async def remove_server(user_id: int, server_id: int):
     await remove_server_by_id(server_id)
     return RedirectResponse(url='/servers', status_code=303)
+
+
+@router.get('/servers/{user_id}/{server_id}', response_class=HTMLResponse)
+async def info_server(user_id: int, server_id: int, request: Request):
+    server = await get_server_by_id(server_id)
+    return templates.TemplateResponse(
+        name='info_server.html',
+        request=request,
+        context={'user_id': user_id, 'server': server}
+    )

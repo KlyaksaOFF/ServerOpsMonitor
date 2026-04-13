@@ -11,7 +11,26 @@
             background: #0f172a;
             color: #e2e8f0;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
+        .add-btn {
+            background: #22c55e;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #16a34a;
+        }
         .container {
             max-width: 800px;
             margin: 50px auto;
@@ -128,6 +147,12 @@
     {% else %}
         <div class="empty">No servers added yet</div>
     {% endif %}
+    <div class="header">
+
+        <a href="/servers/add" class="add-btn">
+            + Add Server
+        </a>
+    </div>
 </div>
 
 </body>
