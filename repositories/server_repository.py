@@ -73,5 +73,8 @@ async def have_user_server(user_id, server_ip):
         )
 
         server = filter_result.scalar_one_or_none()
-        result_validate_ip = await result_ip_api(server=server, server_ip=server_ip)
+        result_validate_ip = await result_ip_api(
+            server=server,
+            server_ip=server_ip
+        )
         return result_validate_ip

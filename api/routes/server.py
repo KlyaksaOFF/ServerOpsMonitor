@@ -80,7 +80,10 @@ async def post_add_server(
     ):
 
     user_id = int(request.cookies.get("user_id"))
-    result_validate_server = await have_user_server(user_id=user_id, server_ip=ip)
+    result_validate_server = await have_user_server(
+        user_id=user_id,
+        server_ip=ip
+    )
     if result_validate_server == "valid_ip":
         await create_server(user_id=user_id, password=password, ip=ip)
         response = RedirectResponse(url='/servers', status_code=303)
