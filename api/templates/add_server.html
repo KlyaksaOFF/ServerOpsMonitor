@@ -17,20 +17,53 @@
             min-height: 100vh;
         }
 
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 15px;
-            padding: 6px 10px;
-            border-radius: 8px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: #e2e8f0;
-            text-decoration: none;
-            font-size: 13px;
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 240px;
+            max-width: 340px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            border: 1px solid transparent;
+            animation: fadeIn 0.25s ease;
         }
 
-        .back-btn:hover {
-            background: #1e293b;
+        .alert.success {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .alert-title {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .alert-text {
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .container {
@@ -45,6 +78,23 @@
             border-radius: 14px;
             padding: 30px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #273449;
         }
 
         h1 {
@@ -74,10 +124,12 @@
             color: #e2e8f0;
             font-size: 14px;
             outline: none;
+            transition: 0.2s;
         }
 
         input:focus {
             border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
         }
 
         .btn {
@@ -88,6 +140,7 @@
             background: #22c55e;
             color: white;
             font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -98,11 +151,24 @@
     </style>
 </head>
 <body>
+
+    {% if flash %}
+        <div class="alert {% if flash == 'Server added successfully' %}success{% else %}error{% endif %}">
+            {% if flash == 'Server added successfully' %}
+                <span class="alert-title">Success</span>
+            {% else %}
+                <span class="alert-title">Error</span>
+            {% endif %}
+            <div class="alert-text">{{ flash }}</div>
+        </div>
+    {% endif %}
+
     <div class="container">
         <div class="card">
             <a href="/servers" class="back-btn">← Back</a>
 
             <h1>➕ Add Server</h1>
+
             <form method="post" action="/servers/add">
                 <div class="form-group">
                     <label for="ip">IP</label>
@@ -118,5 +184,6 @@
             </form>
         </div>
     </div>
+
 </body>
 </html>

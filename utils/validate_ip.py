@@ -21,7 +21,7 @@ class ValidateIP:
         return result_validate_ip
 
 
-async def result_ip(server, server_ip, state: FSMContext):
+async def result_ip_telegram(server, server_ip, state: FSMContext):
     if not server:
         validate_ip = ValidateIP(server_ip)
         if validate_ip.validate():
@@ -30,6 +30,18 @@ async def result_ip(server, server_ip, state: FSMContext):
             return 'valid_ip'
         else:
             return 'invalid_ip'
-    # if server in db
+    # if server in db (telegram checking)
+    logging.info('Server in db')
+    return 'ip_in_db'
+
+
+async def result_ip_api(server, server_ip):
+    if not server:
+        validate_ip = ValidateIP(server_ip)
+        if validate_ip.validate():
+            return 'valid_ip'
+        else:
+            return 'invalid_ip'
+    # if server in db (web checking)
     logging.info('Server in db')
     return 'ip_in_db'

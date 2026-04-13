@@ -11,6 +11,7 @@ from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
     create_server,
     get_server_by_id,
+    have_user_server,
     list_user_connected_servers,
     remove_server_by_id,
 )
@@ -54,35 +55,53 @@ async def main_menu(request: Request):
 async def servers(request: Request):
     user_id = int(request.cookies.get("user_id"))
     servers = await list_user_connected_servers(user_id)
+    flash = request.cookies.get("flash")
     return templates.TemplateResponse(
         name='servers.html',
         request=request,
-        context={'servers': servers, 'user_id': user_id}
+        context={'servers': servers, 'user_id': user_id, 'flash': flash}
     )
 
 
 @router.get('/servers/add')
 async def get_add_server(request: Request):
-    return templates.TemplateResponse(
-        name='add_server.html', request=request)
+    flash = request.cookies.get("flash")
+    response = templates.TemplateResponse(
+        name='add_server.html', request=request, context={'flash': flash})
+    response.delete_cookie('flash')
+    return response
 
 
 @router.post('/servers/add')
 async def post_add_server(
         request: Request,
         password: Annotated[str, Form()],
-        ip: Annotated[str, Form()]):
+        ip: Annotated[str, Form()]
+    ):
 
     user_id = int(request.cookies.get("user_id"))
-    await create_server(user_id=int(user_id), password=password, ip=ip)
-    return RedirectResponse(url='/servers', status_code=303)
+    result_validate_server = await have_user_server(user_id=user_id, server_ip=ip)
+    if result_validate_server == "valid_ip":
+        await create_server(user_id=user_id, password=password, ip=ip)
+        response = RedirectResponse(url='/servers', status_code=303)
+        response.set_cookie("flash", "Server added successfully")
+        return response
+    elif result_validate_server == "invalid_ip":
+        response = RedirectResponse(url='/servers/add', status_code=303)
+        response.set_cookie("flash", "Invalid ip")
+        return response
+    else:
+        response = RedirectResponse(url='/servers/add', status_code=303)
+        response.set_cookie("flash", "Server in your list")
+        return response
 
 
 @router.post('/servers/{user_id}/{server_id}')
 async def check_server(user_id: int, server_id: int):
     server = await get_server_by_id(server_id)
     if server:
-        asyncio.create_task(result_check_server(server=server))
+        task = asyncio.create_task(result_check_server(server=server))
+        await task
         return RedirectResponse(
             url=f'/servers/{user_id}/{server_id}',
             status_code=303

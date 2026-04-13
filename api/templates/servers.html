@@ -11,26 +11,56 @@
             background: #0f172a;
             color: #e2e8f0;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
 
-        .add-btn {
-            background: #22c55e;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 10px;
-            text-decoration: none;
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 240px;
+            max-width: 340px;
+            padding: 14px 18px;
+            border-radius: 12px;
             font-size: 14px;
-            transition: 0.2s;
+            font-weight: 500;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            border: 1px solid transparent;
+            animation: fadeIn 0.25s ease;
         }
 
-        .add-btn:hover {
-            background: #16a34a;
+        .alert.success {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            border-color: rgba(255, 255, 255, 0.12);
         }
+
+        .alert.error {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .alert-title {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .alert-text {
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .container {
             max-width: 800px;
             margin: 50px auto;
@@ -106,54 +136,74 @@
             opacity: 0.6;
             margin-top: 40px;
         }
+
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .add-btn {
+            background: #22c55e;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #16a34a;
+        }
     </style>
 </head>
-
 <body>
 
-<div class="container">
-    <h1>🖥️ Servers</h1>
-
-    {% if servers %}
-        <div class="server-list">
-            {% for server in servers %}
-                <div class="server-card">
-
-                    <div class="server-ip">
-                        <span style="opacity: 0.6; margin-right: 10px;">
-                            #{{ server.id }}
-                        </span>
-
-                        <a href="/servers/{{ user_id }}/{{ server.id }}"
-                           target="_blank"
-                           class="server-link">
-                            {{ server.ip }}
-                        </a>
-                    </div>
-
-                    <div class="status
-                        {% if server.ping == 'pong' %}
-                            status-green
-                        {% else %}
-                            status-red
-                        {% endif %}
-                    ">
-                        {{ server.ping if server.ping else "unknown" }}
-                    </div>
-
-                </div>
-            {% endfor %}
+    {% if flash %}
+        <div class="alert {% if flash == 'Server added successfully' %}success{% else %}error{% endif %}">
+            {% if flash == 'Server added successfully' %}
+                <span class="alert-title">Success</span>
+            {% else %}
+                <span class="alert-title">Error</span>
+            {% endif %}
+            <div class="alert-text">{{ flash }}</div>
         </div>
-    {% else %}
-        <div class="empty">No servers added yet</div>
     {% endif %}
-    <div class="header">
 
-        <a href="/servers/add" class="add-btn">
-            + Add Server
-        </a>
+    <div class="container">
+        <h1>🖥️ Servers</h1>
+
+        {% if servers %}
+            <div class="server-list">
+                {% for server in servers %}
+                    <div class="server-card">
+                        <div class="server-ip">
+                            <span style="opacity: 0.6; margin-right: 10px;">
+                                #{{ server.id }}
+                            </span>
+
+                            <a href="/servers/{{ user_id }}/{{ server.id }}"
+                               target="_blank"
+                               class="server-link">
+                                {{ server.ip }}
+                            </a>
+                        </div>
+
+                        <div class="status {% if server.ping == 'pong' %}status-green{% else %}status-red{% endif %}">
+                            {{ server.ping if server.ping else "unknown" }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">No servers added yet</div>
+        {% endif %}
+
+        <div class="header">
+            <a href="/servers/add" class="add-btn">+ Add Server</a>
+        </div>
     </div>
-</div>
 
 </body>
 </html>

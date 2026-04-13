@@ -38,14 +38,14 @@ async def process_ip(message: types.Message, state: FSMContext):
     server_ip = message.text.strip()
     user_id = message.from_user.id
 
-    result = await process_add_server(
+    result_validate_server = await process_add_server(
         server_ip=server_ip,
         user_id=user_id,
         state=state
     )
-    if result == "valid_ip":
+    if result_validate_server == "valid_ip":
         await message.answer(SEND_PASSWORD)
-    elif result == "invalid_ip":
+    elif result_validate_server == "invalid_ip":
         await message.answer(ERROR_INVALID_IP)
     else:
         await message.answer(SERVER_IN_YOUR_LIST)
