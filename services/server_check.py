@@ -51,5 +51,5 @@ async def result_check_server(server):
         f"✅ {server.ip} \n\n"
         f"Ping: {ping} \n"
         f"Uptime: {uptime}"
-        if runner.rc == 0 else "Error"
+        if runner.rc == 0 else f"Code error: {runner.rc}"
     )
