@@ -1,22 +1,27 @@
 import asyncio
+from os import getenv
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from api.routes import login, server
 from db.db import init_db
 
 app = FastAPI()
-
+host = getenv("HOST")
+port = int(getenv("PORT"))
 app.include_router(server.router)
 app.include_router(login.router)
+
+load_dotenv()
 
 
 async def main() -> None:
     await init_db()
     uvicorn.run("api.api_main:app",
-                      host='127.0.0.1',
-                      port=80, reload=True)
+                      host=host,
+                      port=port, reload=True)
 
 
 if __name__ == "__main__":
