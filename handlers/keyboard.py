@@ -8,7 +8,8 @@ router = Router()
 
 
 @router.message(F.text.lower() == 'list connected servers')
-async def connected_servers(message: types.Message):
+async def connected_servers(message: types.Message, state: FSMContext):
+    await state.clear()
     user_id = message.from_user.id
     servers = await list_user_connected_servers(user_id)
 

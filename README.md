@@ -68,6 +68,8 @@ Quick Start
 
     Add a Server: Select "Add Server" and follow the prompts to enter the IP address and password.
 
+    Remove a Server: Select "List servers" and put button "remove"
+
     Run Monitoring: Navigate to "Server List", select a host, and trigger a check or remove server.
 
     Web Access: Open http://localhost:80 to access the FastAPI dashboard.
@@ -87,3 +89,5 @@ Quick Start
     db/: SQLAlchemy models and database connection setup.
 
     utils/: Helper functions like IP address validation.
+
+Screenshot and video:

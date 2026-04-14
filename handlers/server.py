@@ -35,6 +35,9 @@ async def add_server_start(message: types.Message, state: FSMContext):
 
 @router.message(AddServer.waiting_for_ip)
 async def process_ip(message: types.Message, state: FSMContext):
+    if message.text is None:
+        return await message.answer('Error format, please send ip in format (192.0.0.0)')
+
     server_ip = message.text.strip()
     user_id = message.from_user.id
 
@@ -44,11 +47,11 @@ async def process_ip(message: types.Message, state: FSMContext):
         state=state
     )
     if result_validate_server == "valid_ip":
-        await message.answer(SEND_PASSWORD)
+        return await message.answer(SEND_PASSWORD)
     elif result_validate_server == "invalid_ip":
-        await message.answer(ERROR_INVALID_IP)
+        return await message.answer(ERROR_INVALID_IP)
     else:
-        await message.answer(SERVER_IN_YOUR_LIST)
+        return await message.answer(SERVER_IN_YOUR_LIST)
 
 
 @router.message(AddServer.waiting_for_password)
