@@ -121,8 +121,10 @@ async def remove_server(user_id: int, server_id: int):
 @router.get('/servers/{user_id}/{server_id}', response_class=HTMLResponse)
 async def info_server(user_id: int, server_id: int, request: Request):
     server = await get_server_by_id(server_id)
+    current_user_id = int(request.cookies.get("user_id"))
+
     return templates.TemplateResponse(
         name='info_server.html',
         request=request,
-        context={'user_id': user_id, 'server': server}
+        context={'user_id': user_id, 'server': server, 'current_user_id': current_user_id}
     )

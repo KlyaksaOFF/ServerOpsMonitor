@@ -37,6 +37,7 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #334155;
+            gap: 20px;
         }
 
         .label {
@@ -45,6 +46,8 @@
 
         .value {
             font-weight: 500;
+            text-align: right;
+            word-break: break-word;
         }
 
         .status {
@@ -52,6 +55,7 @@
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
+            display: inline-block;
         }
 
         .green {
@@ -74,6 +78,7 @@
             display: flex;
             gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .inline-form {
@@ -94,7 +99,6 @@
             text-decoration: none;
         }
 
-        /* BACK */
         .btn-back {
             background: #334155;
             color: #e2e8f0;
@@ -105,7 +109,6 @@
             transform: translateY(-1px);
         }
 
-        /* CHECK */
         .btn-check {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
@@ -118,7 +121,6 @@
             box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
         }
 
-        /* DELETE */
         .btn-delete {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
@@ -134,86 +136,124 @@
         .btn:active {
             transform: scale(0.97);
         }
+
+        .error-card {
+            background: #3f1d1d;
+            border: 1px solid #ef4444;
+        }
+
+        .error-title {
+            margin: 0 0 10px;
+            font-size: 24px;
+            color: #fecaca;
+        }
+
+        .error-text {
+            margin: 0;
+            color: #fecaca;
+            font-size: 16px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>🖥️ Server #{{ server.id }}</h1>
+    {% if user_id != current_user_id %}
+        <h1>⛔ Access denied</h1>
 
-    <div class="card">
+        <div class="card error-card">
+            <h2 class="error-title">Вам не доступна данная страница</h2>
+            <p class="error-text">
+                Ваш айди не совпадает с владельцем
+            </p>
 
-        <div class="row">
-            <div class="label">IP Address</div>
-            <div class="value">{{ server.ip }}</div>
+            <div class="actions">
+                <a href="/servers" class="btn btn-back">← Back</a>
+            </div>
         </div>
+    {% else %}
+        <h1>🖥️ Server #{{ server.id }}</h1>
 
-        <div class="row">
-            <div class="label">User ID</div>
-            <div class="value">{{ user_id }}</div>
-        </div>
+        <div class="card">
 
-        <div class="row">
-            <div class="label">Server ID</div>
-            <div class="value">{{ server.id }}</div>
-        </div>
+            <div class="row">
+                <div class="label">IP Address</div>
+                <div class="value">{{ server.ip }}</div>
+            </div>
 
-        <div class="row">
-            <div class="label">Status</div>
-            <div class="value">
-                <span class="status
-                    {% if server.ping == 'pong' %}
-                        green
-                    {% elif server.ping %}
-                        red
+            <div class="row">
+                <div class="label">User ID</div>
+                <div class="value">{{ user_id }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Current user ID</div>
+                <div class="value">{{ current_user_id }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Server ID</div>
+                <div class="value">{{ server.id }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Status</div>
+                <div class="value">
+                    <span class="status
+                        {% if server.ping == 'pong' %}
+                            green
+                        {% elif server.ping %}
+                            red
+                        {% else %}
+                            unknown
+                        {% endif %}
+                    ">
+                        {{ server.ping if server.ping else "unknown" }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="label">Uptime</div>
+                <div class="value">
+                    {% if server.uptime %}
+                        {{ server.uptime }}
                     {% else %}
                         unknown
                     {% endif %}
-                ">
-                    {{ server.ping if server.ping else "unknown" }}
-                </span>
+                </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="label">Uptime</div>
-            <div class="value">
-                {% if server.uptime %}
-                    {{ server.uptime }}
-                {% else %}
-                    unknown
-                {% endif %}
-            </div>
-        </div>
+            <div class="actions">
+                <a href="/servers" class="btn btn-back">← Back</a>
 
-        <div class="actions">
-            <a href="/servers" class="btn btn-back">← Back</a>
+                <form method="post" action="/servers/{{ user_id }}/{{ server.id }}" class="inline-form">
+                    <button type="submit" class="btn btn-check">
+                        ⚡ Check server
+                    </button>
+                </form>
 
-            <form method="post" action="/servers/{{ user_id }}/{{ server.id }}" class="inline-form">
-                <button type="submit" class="btn btn-check">
-                    ⚡ Check server
+                <button
+                    class="btn btn-delete"
+                    onclick="deleteServer({{ user_id }}, {{ server.id }})"
+                >
+                    🗑 Remove
                 </button>
-            </form>
+            </div>
 
-            <button
-                class="btn btn-delete"
-                onclick="deleteServer({{ user_id }}, {{ server.id }})"
-            >
-                🗑 Remove
-            </button>
-
-            <script>
-            async function deleteServer(userId, serverId) {
-                await fetch(`/servers/${userId}/${serverId}`, {
-                    method: 'DELETE'
-                });
-                window.location.href = '/servers';
-            }
-            </script>
         </div>
 
-    </div>
+        <script>
+        async function deleteServer(userId, serverId) {
+            await fetch(`/servers/${userId}/${serverId}`, {
+                method: 'DELETE'
+            });
+            window.location.href = '/servers';
+        }
+        </script>
+    {% endif %}
 </div>
 
 </body>
