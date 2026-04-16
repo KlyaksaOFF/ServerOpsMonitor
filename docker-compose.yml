@@ -1,9 +1,28 @@
 services:
 
-  appwork:
+  bot:
     build: .
     image: serverops-bot:latest
+    command: make bot-start
     restart: always
+    environment:
+      PYTHONPATH: .
+      DATABASE_URL: postgresql+asyncpg://postgres:example@db:5432/my_database
+      DB_HOST: db
+      DB_NAME: my_database
+      DB_USER: postgres
+      DB_PASSWORD: example
+      BOT_TOKEN: ${BOT_TOKEN}
+    depends_on:
+      - db
+
+  api:
+    build: .
+    image: serverops-bot:latest
+    command: make api-start
+    restart: always
+    ports:
+      - "80:80"
     environment:
       PYTHONPATH: .
       DATABASE_URL: postgresql+asyncpg://postgres:example@db:5432/my_database

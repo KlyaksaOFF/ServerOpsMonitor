@@ -11,5 +11,3 @@ COPY Makefile pyproject.toml ./
 RUN make install
 
 COPY . .
-
-CMD ["make", "start"]
