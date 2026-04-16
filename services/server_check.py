@@ -54,11 +54,15 @@ async def result_check_server(server):
     code = runner.rc
     await added_check_in_table_server(server, ping, uptime)
     return (
+        "CHECK SERVER: \n\n"
         f"✅ {server.ip} \n\n"
         f"Ping: {ping} \n"
         f"Uptime: {uptime}\n"
         f"Code: {code}\n"
         f"Status: {status}"
-        if code == 0 else f"Code error: {code} \n"
-                               f"Status: {status}"
+        if code == 0 else
+        "CHECK SERVER: \n\n"
+        f"❌ {server.ip} \n\n"
+        f"Code error: {code} \n"
+        f"Status: {status}"
     )

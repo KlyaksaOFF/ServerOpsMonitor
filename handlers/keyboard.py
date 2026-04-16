@@ -23,7 +23,14 @@ async def connected_servers(message: types.Message, state: FSMContext):
             text=server.ip, callback_data=f'server_{server.id}'
         ),
                         types.InlineKeyboardButton(
-                            text='remove', callback_data=f'remove_{server.id}')]
+                            text='check', callback_data=f'check_{server.id}'),
+
+        types.InlineKeyboardButton(text='update',
+                                   callback_data=f'update_{server.id}'),
+
+        types.InlineKeyboardButton(text='remove',
+                                   callback_data=f'remove_{server.id}'),
+        ]
         )
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
 

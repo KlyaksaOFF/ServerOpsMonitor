@@ -1,6 +1,7 @@
 import logging
 
 from aiogram import F, Router, types
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -15,6 +16,9 @@ from repositories.server_repository import (
 from services.server_check import (
     result_check_server,
 )
+from services.server_update import (
+    result_update_server,
+)
 from texts.texts import (
     ENTER_IP,
     ERROR_FORMAT_IP,
@@ -26,6 +30,12 @@ from texts.texts import (
 )
 
 router = Router()
+
+
+@router.message(Command('start'))
+async def start(message: types.Message):
+    await message.answer('Enter the command /servers and '
+                         'click on the button you need.')
 
 
 @router.message(F.text.lower() == 'add server')
@@ -68,6 +78,18 @@ async def process_password(message: types.Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith("server_"))
+async def ip_server(callback: CallbackQuery):
+    server_id = int(callback.data.split("_")[1])
+
+    server = await get_server_by_id(server_id)
+
+    if not server:
+        return await callback.answer(NOT_SERVER, show_alert=True)
+
+    return await callback.answer(server.ip)
+
+
+@router.callback_query(F.data.startswith("check_"))
 async def info_server(callback: CallbackQuery):
 
     server_id = int(callback.data.split("_")[1])
@@ -96,3 +118,23 @@ async def remove_server(callback: CallbackQuery):
         await callback.message.answer('The server has already been deleted')
 
     return await callback.answer()
+
+
+@router.callback_query(F.data.startswith("update_"))
+async def update_server(callback: CallbackQuery):
+    server_id = int(callback.data.split("_")[1])
+
+    server = await get_server_by_id(server_id)
+
+    if not server:
+        return await callback.answer(NOT_SERVER, show_alert=True)
+    await callback.message.answer("""
+    Warning! The update may take 
+    anywhere from a few seconds to more than 5 minutes.
+    During this time, you can continue using the bot 
+    and checking the servers, as my bot is asynchronous.
+    """)
+
+    return await callback.message.answer(
+        await result_update_server(server=server)
+    )
