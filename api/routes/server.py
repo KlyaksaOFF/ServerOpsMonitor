@@ -126,5 +126,9 @@ async def info_server(user_id: int, server_id: int, request: Request):
     return templates.TemplateResponse(
         name='info_server.html',
         request=request,
-        context={'user_id': user_id, 'server': server, 'current_user_id': current_user_id}
+        context={
+            'user_id': user_id,
+            'server': server,
+            'current_user_id': current_user_id
+        }
     )
