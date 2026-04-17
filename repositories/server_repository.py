@@ -78,3 +78,11 @@ async def have_user_server(user_id, server_ip):
             server_ip=server_ip
         )
         return result_validate_ip
+
+
+async def get_all_servers():
+    async with async_session() as session:
+        result = await session.execute((select(ServerList)))
+        servers = result.scalars().all()
+
+        return servers

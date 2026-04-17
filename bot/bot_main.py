@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from db.db import init_db
 from handlers.keyboard import router as router_keyboard
 from handlers.server import router as router_main
+from utils.util_check_server import auto_check_servers
 
 load_dotenv()
 TOKEN = (getenv("BOT_TOKEN"))
@@ -26,6 +27,7 @@ async def main() -> None:
         token=TOKEN,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
+    asyncio.create_task(auto_check_servers(bot))
     await dp.start_polling(bot)
 
 
