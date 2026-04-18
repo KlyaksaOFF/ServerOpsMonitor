@@ -17,4 +17,4 @@ api-start:
 	uv run python -m api.api_main
 
 docker-logs:
-	docker compose logs -f appwork
+	docker compose logs -f bot

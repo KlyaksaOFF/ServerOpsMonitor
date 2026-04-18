@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from db.db import init_db
 from handlers.keyboard import router as router_keyboard
 from handlers.server import router as router_main
-from utils.util_check_server import auto_check_servers
+from utils.utils_check_server import auto_check_servers
 
 load_dotenv()
 TOKEN = (getenv("BOT_TOKEN"))

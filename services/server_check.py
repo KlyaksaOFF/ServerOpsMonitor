@@ -19,7 +19,7 @@ async def check_server(server):
             'gather_facts': False,
             'tasks': [
                 {'name': 'ping test', 'ping': None},
-                {'name': 'uptime server', 'command': 'uptime'}
+                {'name': 'uptime server', 'command': 'uptime'},
             ]
         }]
     }
@@ -36,12 +36,12 @@ def take_data_check_server(runner):
         if event.get('event') == 'runner_on_ok':
             task_name = event_data.get('task')
             res = event_data.get('res')
-
-            if task_name == 'ping test':
-                result_check['ping'] = res.get('ping')
-
-            elif task_name == 'uptime server':
-                result_check['uptime'] = res.get('stdout')
+            print(res)
+            match task_name:
+                case 'ping test':
+                    result_check['ping'] = res.get('ping')
+                case 'uptime server':
+                    result_check['uptime'] = res.get('stdout')
     return result_check
 
 

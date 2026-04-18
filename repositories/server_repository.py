@@ -80,9 +80,28 @@ async def have_user_server(user_id, server_ip):
         return result_validate_ip
 
 
-async def get_all_servers():
+async def get_all_servers_autocheck():
     async with async_session() as session:
-        result = await session.execute((select(ServerList)))
+        result = await session.execute(
+    select(ServerList).filter_by(autocheck=True)
+        )
         servers = result.scalars().all()
 
         return servers
+
+
+async def process_function_autocheck(server_id):
+    async with async_session() as session:
+        filter_process = await session.execute(
+            select(ServerList).filter_by(id=server_id)
+        )
+
+        server = filter_process.scalar_one_or_none()
+
+        match server.autocheck:
+            case True:
+                server.autocheck = False
+                await session.commit()
+            case False:
+                server.autocheck = True
+                await session.commit()

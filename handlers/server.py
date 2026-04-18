@@ -11,6 +11,7 @@ from repositories.server_repository import (
     create_server,
     get_server_by_id,
     process_add_server,
+    process_function_autocheck,
     remove_server_by_server_id,
 )
 from services.server_check import (
@@ -138,3 +139,15 @@ async def update_server(callback: CallbackQuery):
     return await callback.message.answer(
         await result_update_server(server=server)
     )
+
+
+@router.callback_query(F.data.startswith("autocheck_"))
+async def authcheck_function(callback: CallbackQuery):
+    server_id = int(callback.data.split("_")[1])
+    server = await get_server_by_id(server_id)
+
+    if not server:
+        return await callback.answer(NOT_SERVER, show_alert=True)
+
+    await process_function_autocheck(server_id)
+    return await callback.message.answer('Oke')

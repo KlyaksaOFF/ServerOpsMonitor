@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, String
+from sqlalchemy import BigInteger, Boolean, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -14,3 +14,6 @@ class ServerList(Base):
     user_id: Mapped[int] = mapped_column(BigInteger)
     ping: Mapped[str] = mapped_column(String(20), nullable=True)
     uptime: Mapped[str] = mapped_column(String(100), nullable=True)
+    autocheck: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
