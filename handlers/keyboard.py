@@ -2,7 +2,10 @@ from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
-from repositories.server_repository import list_user_connected_servers
+from repositories.server_repository import (
+    list_user_connected_servers,
+    state_autocheck_server,
+)
 
 router = Router()
 
@@ -30,7 +33,7 @@ async def connected_servers(message: types.Message, state: FSMContext):
 
         types.InlineKeyboardButton(text='remove',
                                    callback_data=f'remove_{server.id}'),
-        types.InlineKeyboardButton(text='autocheck',
+        types.InlineKeyboardButton(text=await state_autocheck_server(server.id),
                                     callback_data=f'autocheck_{server.id}'),
         ]
         )

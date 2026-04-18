@@ -105,3 +105,14 @@ async def process_function_autocheck(server_id):
             case False:
                 server.autocheck = True
                 await session.commit()
+
+
+async def state_autocheck_server(server_id):
+    async with async_session() as session:
+        filter_process = await session.execute(
+            select(ServerList).filter_by(id=server_id, autocheck=False)
+        )
+
+        server = filter_process.scalar_one_or_none()
+
+        return '❌Now AutoCheck off❌' if server else '✅Now AutoCheck on✅'

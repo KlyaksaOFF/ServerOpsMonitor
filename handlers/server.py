@@ -13,6 +13,7 @@ from repositories.server_repository import (
     process_add_server,
     process_function_autocheck,
     remove_server_by_server_id,
+    state_autocheck_server,
 )
 from services.server_check import (
     result_check_server,
@@ -150,4 +151,6 @@ async def authcheck_function(callback: CallbackQuery):
         return await callback.answer(NOT_SERVER, show_alert=True)
 
     await process_function_autocheck(server_id)
-    return await callback.message.answer('Oke')
+
+    state_server = await state_autocheck_server(server_id)
+    return await callback.message.answer(state_server)
