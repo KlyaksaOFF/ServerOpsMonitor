@@ -19,6 +19,7 @@ class ServerList(Base):
         Boolean, default=False, nullable=False
     )
 
+
 class Admins(Base):
     __tablename__ = 'admins'
 

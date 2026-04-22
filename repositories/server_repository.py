@@ -1,8 +1,8 @@
 from aiogram.fsm.context import FSMContext
-from sqlalchemy import select, update, func, distinct
+from sqlalchemy import distinct, func, select, update
 
 from db.db import async_session
-from db.models import ServerList, Admins
+from db.models import Admins, ServerList
 from utils.validate_ip import result_ip_api, result_ip_telegram
 
 
@@ -87,7 +87,6 @@ async def get_all_servers_autocheck():
         )
         servers = result.scalars().all()
 
-
         return servers
 
 
@@ -121,7 +120,9 @@ async def state_autocheck_server(server_id):
 
 async def count_unique_users():
     async with async_session() as session:
-        filter_process =  await session.execute(select(func.count(distinct(ServerList.user_id))))
+        filter_process = await session.execute(
+            select(func.count(distinct(ServerList.user_id))))
+
         unique_users = filter_process.scalar()
 
         return unique_users
@@ -129,7 +130,9 @@ async def count_unique_users():
 
 async def count_unique_servers():
     async with async_session() as session:
-        filter_process =  await session.execute(select(func.count(distinct(ServerList.ip))))
+        filter_process = await session.execute(
+            select(func.count(distinct(ServerList.ip))))
+
         unique_servers = filter_process.scalar()
 
         return unique_servers
@@ -137,7 +140,9 @@ async def count_unique_servers():
 
 async def check_admin_user_id(user_id):
     async with async_session() as session:
-        filter_process = await session.execute(select(Admins).filter_by(user_id=user_id))
+        filter_process = await session.execute(
+            select(Admins).filter_by(user_id=user_id))
+
         user = filter_process.scalar_one_or_none()
 
         return user
