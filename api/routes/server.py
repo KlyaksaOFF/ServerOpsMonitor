@@ -14,6 +14,9 @@ from repositories.server_repository import (
     have_user_server,
     list_user_connected_servers,
     remove_server_by_server_id,
+    count_unique_users,
+    count_unique_servers,
+    check_admin_user_id,
 )
 from services.server_check import result_check_server
 
@@ -130,5 +133,24 @@ async def info_server(user_id: int, server_id: int, request: Request):
             'user_id': user_id,
             'server': server,
             'current_user_id': current_user_id
+        }
+    )
+
+
+@router.get('/admin/', response_class=HTMLResponse)
+async def admin_main(request: Request):
+    current_user_id = int(request.cookies.get("user_id"))
+
+    unique_users = await count_unique_users()
+    unique_servers = await count_unique_servers()
+    user_have_admin = await check_admin_user_id(current_user_id)
+
+    return templates.TemplateResponse(
+        name='admin.html',
+        request=request,
+        context={
+            'user_have_admin': user_have_admin,
+            'count_unique_users': unique_users,
+            'count_unique_servers': unique_servers
         }
     )

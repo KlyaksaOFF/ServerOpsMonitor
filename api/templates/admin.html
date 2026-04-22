@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; line-height: 1.6; color: #333; }
+        .error-container { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 20px; border-radius: 8px; }
+        .stats-card { background: #fdfdfd; padding: 20px; border: 1px solid #ddd; border-radius: 8px; width: fit-content; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; }
+        .stat-item { margin-bottom: 10px; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+    {% if user_have_admin %}
+        <h1>Administrator Dashboard</h1>
+
+        <div class="stats-card">
+            <div class="stat-item">
+                <strong>Unique Users:</strong> {{ count_unique_users }}
+            </div>
+            <div class="stat-item">
+                <strong>Unique Servers:</strong> {{ count_unique_servers }}
+            </div>
+        </div>
+
+        <p>Welcome back! You have full access to the management tools.</p>
+
+    {% else %}
+        <div class="error-container">
+            <h1>Access Denied</h1>
+            <p>You do not have the required permissions to view this page.</p>
+        </div>
+    {% endif %}
+
+</body>
+</html>
