@@ -146,3 +146,22 @@ async def check_admin_user_id(user_id):
         user = filter_process.scalar_one_or_none()
 
         return user
+
+
+async def all_users_id():
+    async with async_session() as session:
+        filter_process = await session.execute(
+            select(ServerList.user_id).distinct())
+
+        users_ids = filter_process.scalars().all()
+
+        return users_ids
+
+
+async def all_servers_ip():
+    async with async_session() as session:
+        filter_process = await session.execute(select(ServerList.ip).distinct())
+
+        servers_ip = filter_process.scalars().all()
+
+        return servers_ip

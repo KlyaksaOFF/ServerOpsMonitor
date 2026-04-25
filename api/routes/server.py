@@ -9,6 +9,8 @@ from fastapi.templating import Jinja2Templates
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
+    all_servers_ip,
+    all_users_id,
     check_admin_user_id,
     count_unique_servers,
     count_unique_users,
@@ -141,16 +143,26 @@ async def info_server(user_id: int, server_id: int, request: Request):
 async def admin_main(request: Request):
     current_user_id = int(request.cookies.get("user_id"))
 
-    unique_users = await count_unique_users()
-    unique_servers = await count_unique_servers()
     user_have_admin = await check_admin_user_id(current_user_id)
+    if user_have_admin:
+        count_value_unique_users = await count_unique_users()
+        count_value_unique_servers = await count_unique_servers()
+        all_unique_users_id = await all_users_id()
+        all_unique_servers_ip = await all_servers_ip()
 
-    return templates.TemplateResponse(
-        name='admin.html',
-        request=request,
-        context={
-            'user_have_admin': user_have_admin,
-            'count_unique_users': unique_users,
-            'count_unique_servers': unique_servers
-        }
-    )
+        return templates.TemplateResponse(
+            name='admin.html',
+            request=request,
+            context={
+                'user_have_admin': user_have_admin,
+                'count_unique_users': count_value_unique_users,
+                'count_unique_servers': count_value_unique_servers,
+                'all_unique_users_id': all_unique_users_id,
+                'all_unique_servers_ip': all_unique_servers_ip,
+            })
+
+    else:
+        return templates.TemplateResponse(
+            name='admin.html',
+            request=request,
+            context={'user_have_admin': user_have_admin})
