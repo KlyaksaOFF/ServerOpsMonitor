@@ -18,6 +18,7 @@ from repositories.server_repository import (
     get_server_by_id,
     have_user_server,
     list_user_connected_servers,
+    remove_all_where_ip,
     remove_server_by_server_id,
 )
 from services.server_check import result_check_server
@@ -166,3 +167,9 @@ async def admin_main(request: Request):
             name='admin.html',
             request=request,
             context={'user_have_admin': user_have_admin})
+
+
+@router.delete('/admin/{server_ip}/delete-all')
+async def admin_delete_ip(server_ip):
+    await remove_all_where_ip(server_ip)
+    return RedirectResponse(url='/admin', status_code=303)

@@ -61,7 +61,7 @@
         }
 
         .list-box {
-            max-height: 200px;
+            max-height: 260px;
             overflow-y: auto;
             background: #0f172a;
             border: 1px solid #334155;
@@ -70,13 +70,48 @@
         }
 
         .list-item {
-            padding: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
             border-bottom: 1px solid #1e293b;
             font-size: 14px;
         }
 
         .list-item:last-child {
             border-bottom: none;
+        }
+
+        .item-value {
+            word-break: break-all;
+        }
+
+        .btn {
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .btn-ban {
+            background: #ef4444;
+        }
+
+        .btn-ban:hover {
+            background: #dc2626;
+        }
+
+        .btn-delete {
+            background: #f97316;
+        }
+
+        .btn-delete:hover {
+            background: #ea580c;
         }
 
         .welcome {
@@ -109,7 +144,6 @@
     {% if user_have_admin %}
         <h1>🛠️ Admin Dashboard</h1>
 
-        <!-- Статистика -->
         <div class="card">
             <div class="stat-item">
                 <span class="stat-label">Unique Users</span>
@@ -122,30 +156,42 @@
             </div>
         </div>
 
-        <!-- Список пользователей -->
         <div class="card">
             <div class="list-title">👤 Users ID</div>
+
             <div class="list-box">
                 {% for user_id in all_unique_users_id %}
                     <div class="list-item">
-                        {{ user_id }}
+                        <span class="item-value">{{ user_id }}</span>
                     </div>
                 {% else %}
-                    <div class="list-item">No users found</div>
+                    <div class="list-item">
+                        <span>No users found</span>
+                    </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Список серверов -->
         <div class="card">
             <div class="list-title">🖥️ Servers IP</div>
+
             <div class="list-box">
                 {% for server_ip in all_unique_servers_ip %}
                     <div class="list-item">
-                        {{ server_ip }}
+                        <span class="item-value">{{ server_ip }}</span>
+
+                        <button
+                            class="btn btn-delete"
+                            type="button"
+                            onclick="deleteServer('{{ server_ip }}')"
+                        >
+                            Delete for all
+                        </button>
                     </div>
                 {% else %}
-                    <div class="list-item">No servers found</div>
+                    <div class="list-item">
+                        <span>No servers found</span>
+                    </div>
                 {% endfor %}
             </div>
         </div>
@@ -162,6 +208,34 @@
     {% endif %}
 
 </div>
+
+<script>
+    async function deleteServer(serverIp) {
+        const confirmed = confirm(`Delete server ${serverIp} for all users?`);
+
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(`/admin/${serverIp}/delete-all`, {
+                method: "DELETE"
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert("Failed to delete server");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error occurred while deleting");
+        }
+    }
+</script>
 
 </body>
 </html>

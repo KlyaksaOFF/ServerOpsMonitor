@@ -165,3 +165,25 @@ async def all_servers_ip():
         servers_ip = filter_process.scalars().all()
 
         return servers_ip
+
+
+async def remove_all_where_ip(server_ip):
+    async with async_session() as session:
+        result = await session.execute(
+            select(ServerList).filter_by(ip=server_ip)
+        )
+
+        servers = result.scalars().all()
+
+        if servers:
+            for server in servers:
+                await session.delete(server)
+            await session.commit()
+
+
+async def ban_user(user_id):
+    async with async_session() as session:
+        await session.execute(update(ServerList).where(
+            ServerList.user_id == user_id).values(
+            have_ban=True)
+        )
