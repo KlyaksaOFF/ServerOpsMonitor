@@ -179,11 +179,3 @@ async def remove_all_where_ip(server_ip):
             for server in servers:
                 await session.delete(server)
             await session.commit()
-
-
-async def ban_user(user_id):
-    async with async_session() as session:
-        await session.execute(update(ServerList).where(
-            ServerList.user_id == user_id).values(
-            have_ban=True)
-        )
