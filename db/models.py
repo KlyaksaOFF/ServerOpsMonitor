@@ -18,9 +18,6 @@ class ServerList(Base):
     autocheck: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False
     )
-    have_ban: Mapped[bool] = mapped_column(
-        Boolean, default=False, nullable=False
-    )
 
 
 class Admins(Base):
