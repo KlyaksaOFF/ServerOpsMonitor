@@ -9,6 +9,8 @@ from fastapi.templating import Jinja2Templates
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
+    add_new_admin,
+    all_admin_users,
     all_servers_ip,
     all_users_id,
     check_admin_user_id,
@@ -20,8 +22,6 @@ from repositories.server_repository import (
     list_user_connected_servers,
     remove_all_where_ip,
     remove_server_by_server_id,
-    add_new_admin,
-    all_admin_users,
 )
 from services.server_check import result_check_server
 
@@ -68,11 +68,14 @@ async def servers(request: Request):
     response = templates.TemplateResponse(
         name='servers.html',
         request=request,
-        context={'servers': list_servers_user, 'user_id': user_id, 'flash': flash}
+        context={'servers': list_servers_user,
+                 'user_id': user_id,
+                 'flash': flash}
     )
 
     response.delete_cookie('flash')
     return response
+
 
 @router.get('/servers/add')
 async def get_add_server(request: Request):
@@ -113,6 +116,7 @@ async def post_add_server(
             response = RedirectResponse(url='/servers/add', status_code=303)
             response.set_cookie("flash", "Server in your list")
             return response
+
 
 @router.post('/servers/{user_id}/{server_id}')
 async def check_server(user_id: int, server_id: int):
@@ -210,7 +214,10 @@ async def permission_menu_add_new_admin(
     ):
 
     current_admin_id = int(request.cookies.get("user_id"))
-    result_add = await add_new_admin(current_admin_id=current_admin_id, new_admin_id=int(new_admin_id))
+    result_add = await add_new_admin(
+        current_admin_id=current_admin_id,
+        new_admin_id=int(new_admin_id),
+    )
 
     match result_add:
         case True:
@@ -218,7 +225,8 @@ async def permission_menu_add_new_admin(
             response.set_cookie("flash", "New admin added")
             return response
         case False:
-            response = RedirectResponse(url='/admin/permission-menu/', status_code=303)
+            response = RedirectResponse(
+                url='/admin/permission-menu/', status_code=303)
             response.set_cookie("flash", "Fail operation: user have admin")
             return response
 

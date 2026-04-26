@@ -1,5 +1,7 @@
-from db.models import Admins, ServerList
-from sqlalchemy import distinct, func, select, update, insert
+from sqlalchemy import select
+
+from db.models import Admins
+
 
 async def get_admin_by_user_id(user_id, session):
     process_filter_current_admin = await session.execute(
