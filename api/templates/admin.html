@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
 
@@ -24,12 +22,59 @@
             font-weight: 600;
         }
 
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .btn-nav {
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-main {
+            background: #475569;
+            color: white;
+        }
+
+        .btn-main:hover {
+            background: #334155;
+        }
+
+        .btn-permission {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-permission:hover {
+            background: #1d4ed8;
+        }
+
+        /* FLASH */
+        .flash {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .flash-success {
+            background: #16a34a;
+        }
+
+        .flash-error {
+            background: #dc2626;
+        }
+
         .card {
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 14px;
             padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             margin-bottom: 20px;
         }
 
@@ -37,27 +82,8 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 12px;
-            padding-bottom: 10px;
             border-bottom: 1px solid #334155;
-            font-size: 15px;
-        }
-
-        .stat-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .stat-label {
-            opacity: 0.7;
-        }
-
-        .stat-value {
-            font-weight: 600;
-        }
-
-        .list-title {
-            margin-bottom: 10px;
-            font-weight: 600;
+            padding-bottom: 10px;
         }
 
         .list-box {
@@ -72,68 +98,31 @@
         .list-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 12px;
             padding: 8px 0;
             border-bottom: 1px solid #1e293b;
-            font-size: 14px;
-        }
-
-        .list-item:last-child {
-            border-bottom: none;
-        }
-
-        .item-value {
-            word-break: break-all;
-        }
-
-        .btn {
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .btn-ban {
-            background: #ef4444;
-        }
-
-        .btn-ban:hover {
-            background: #dc2626;
         }
 
         .btn-delete {
             background: #f97316;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
         }
 
         .btn-delete:hover {
             background: #ea580c;
         }
 
-        .welcome {
-            margin-top: 10px;
-            opacity: 0.8;
-        }
-
         .error {
-            background: #1e293b;
             border: 1px solid #ef4444;
-            border-radius: 14px;
             padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border-radius: 14px;
         }
 
         .error h1 {
             color: #ef4444;
-            margin-bottom: 10px;
-        }
-
-        .error p {
-            opacity: 0.8;
         }
     </style>
 </head>
@@ -141,69 +130,58 @@
 
 <div class="container">
 
+    <div class="top-nav">
+        <a href="/main_menu/" class="btn-nav btn-main">Main Menu</a>
+        <a href="/admin/permission-menu/" class="btn-nav btn-permission">Permission Menu</a>
+    </div>
+
+    <!-- FLASH -->
+    {% if flash %}
+        <div class="flash {% if 'Fail' in flash %}flash-error{% else %}flash-success{% endif %}">
+            {{ flash }}
+        </div>
+    {% endif %}
+
     {% if user_have_admin %}
         <h1>🛠️ Admin Dashboard</h1>
 
         <div class="card">
             <div class="stat-item">
-                <span class="stat-label">Unique Users</span>
-                <span class="stat-value">{{ count_unique_users }}</span>
+                <span>Unique Users</span>
+                <span>{{ count_unique_users }}</span>
             </div>
-
             <div class="stat-item">
-                <span class="stat-label">Unique Servers</span>
-                <span class="stat-value">{{ count_unique_servers }}</span>
+                <span>Unique Servers</span>
+                <span>{{ count_unique_servers }}</span>
             </div>
         </div>
 
         <div class="card">
-            <div class="list-title">👤 Users ID</div>
-
+            <div>👤 Users ID</div>
             <div class="list-box">
                 {% for user_id in all_unique_users_id %}
-                    <div class="list-item">
-                        <span class="item-value">{{ user_id }}</span>
-                    </div>
-                {% else %}
-                    <div class="list-item">
-                        <span>No users found</span>
-                    </div>
+                    <div class="list-item">{{ user_id }}</div>
                 {% endfor %}
             </div>
         </div>
 
         <div class="card">
-            <div class="list-title">🖥️ Servers IP</div>
-
+            <div>🖥️ Servers IP</div>
             <div class="list-box">
                 {% for server_ip in all_unique_servers_ip %}
                     <div class="list-item">
-                        <span class="item-value">{{ server_ip }}</span>
-
-                        <button
-                            class="btn btn-delete"
-                            type="button"
-                            onclick="deleteServer('{{ server_ip }}')"
-                        >
-                            Delete for all
+                        <span>{{ server_ip }}</span>
+                        <button class="btn-delete" onclick="deleteServer('{{ server_ip }}')">
+                            Delete
                         </button>
-                    </div>
-                {% else %}
-                    <div class="list-item">
-                        <span>No servers found</span>
                     </div>
                 {% endfor %}
             </div>
-        </div>
-
-        <div class="welcome">
-            Welcome back! You have full access to the system.
         </div>
 
     {% else %}
         <div class="error">
             <h1>Access Denied</h1>
-            <p>You do not have the required permissions to view this page.</p>
         </div>
     {% endif %}
 
@@ -211,31 +189,20 @@
 
 <script>
     async function deleteServer(serverIp) {
-        const confirmed = confirm(`Delete server ${serverIp} for all users?`);
-
+        const confirmed = confirm(`Delete ${serverIp}?`);
         if (!confirmed) return;
 
-        try {
-            const response = await fetch(`/admin/${serverIp}/delete-all`, {
-                method: "DELETE"
-            });
+        const response = await fetch(`/admin/${serverIp}/delete-all`, {
+            method: "DELETE"
+        });
 
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                alert("Failed to delete server");
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Error occurred while deleting");
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert("Error");
         }
     }
 </script>
 
-</body>
-</html>
+
+</body></html>

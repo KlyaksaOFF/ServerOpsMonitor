@@ -14,7 +14,7 @@ bot-start:
 	uv run python -m bot.bot_main
 
 api-start:
-	uv run python -m api.api_main
+	sudo uv run python -m api.api_main
 
 docker-logs:
 	docker compose logs -f bot

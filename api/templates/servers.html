@@ -12,6 +12,28 @@
             color: #e2e8f0;
         }
 
+        /* TOP NAV */
+        .top-nav {
+            max-width: 800px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        .btn-nav {
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            background: #475569;
+            color: white;
+        }
+
+        .btn-nav:hover {
+            background: #334155;
+        }
+
         .alert {
             position: fixed;
             top: 20px;
@@ -30,12 +52,10 @@
 
         .alert.success {
             background: linear-gradient(135deg, #16a34a, #22c55e);
-            border-color: rgba(255, 255, 255, 0.12);
         }
 
         .alert.error {
             background: linear-gradient(135deg, #dc2626, #ef4444);
-            border-color: rgba(255, 255, 255, 0.12);
         }
 
         .alert-title {
@@ -63,7 +83,7 @@
 
         .container {
             max-width: 800px;
-            margin: 50px auto;
+            margin: 20px auto 50px;
             padding: 20px;
         }
 
@@ -106,7 +126,6 @@
         .server-link {
             color: #38bdf8;
             text-decoration: none;
-            transition: 0.2s;
         }
 
         .server-link:hover {
@@ -150,7 +169,6 @@
             border-radius: 10px;
             text-decoration: none;
             font-size: 14px;
-            transition: 0.2s;
         }
 
         .add-btn:hover {
@@ -159,6 +177,11 @@
     </style>
 </head>
 <body>
+
+    <!-- MAIN MENU BUTTON -->
+    <div class="top-nav">
+        <a href="/main_menu/" class="btn-nav">Main Menu</a>
+    </div>
 
     {% if flash %}
         <div class="alert {% if flash == 'Server added successfully' %}success{% else %}error{% endif %}">

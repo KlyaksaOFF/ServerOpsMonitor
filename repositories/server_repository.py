@@ -1,10 +1,10 @@
 from aiogram.fsm.context import FSMContext
-from sqlalchemy import distinct, func, select, update
+from sqlalchemy import distinct, func, select, update, insert
 
 from db.db import async_session
 from db.models import Admins, ServerList
 from utils.validate_ip import result_ip_api, result_ip_telegram
-
+from repositories.server_queries import get_admin_by_user_id
 
 async def list_user_connected_servers(user_id):
     async with async_session() as session:
@@ -179,3 +179,25 @@ async def remove_all_where_ip(server_ip):
             for server in servers:
                 await session.delete(server)
             await session.commit()
+
+
+async def add_new_admin(current_admin_id, new_admin_id):
+    async with async_session() as session:
+        result_current_admin_id = await get_admin_by_user_id(current_admin_id, session)
+        existing_new_admin = await get_admin_by_user_id(new_admin_id, session)
+
+        if result_current_admin_id and not existing_new_admin:
+            await session.execute(insert(Admins).values(user_id=new_admin_id, admin=True))
+            await session.commit()
+            return True
+        return False
+
+
+async def all_admin_users():
+    async with async_session() as session:
+        process_filter = await session.execute(
+        select(Admins).filter_by(admin=True))
+
+        users = process_filter.scalars().all()
+
+        return users
