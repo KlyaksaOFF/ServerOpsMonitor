@@ -54,9 +54,10 @@ async def process_add_server(server_ip, user_id, state: FSMContext):
 
 async def added_check_in_table_server(server, ping, uptime):
     async with async_session() as session:
-        await session.execute(update(ServerList).where(ServerList.ip
-                                                       == server.ip)
-        .values(ping=ping, uptime=uptime))
+        await session.execute(
+            update(ServerList).where(ServerList.ip == server.ip)
+            .values(ping=ping, uptime=uptime)
+        )
         await session.commit()
 
 
@@ -192,7 +193,7 @@ async def add_new_admin(current_admin_id, new_admin_id):
 
         if result_current_admin_id and not existing_new_admin:
             await session.execute(
-                insert(Admins).values(user_id=new_admin_id, admin=True))
+                insert(Admins).values(user_id=new_admin_id))
 
             await session.commit()
             return True
@@ -202,8 +203,19 @@ async def add_new_admin(current_admin_id, new_admin_id):
 async def all_admin_users():
     async with async_session() as session:
         process_filter = await session.execute(
-        select(Admins).filter_by(admin=True))
+        select(Admins))
 
         users = process_filter.scalars().all()
 
         return users
+
+
+async def remove_user_admin(user_id):
+    async with async_session() as session:
+
+       result = await session.execute(select(Admins).where(Admins.user_id
+                                                       == user_id))
+       user = result.scalar_one_or_none()
+       if user:
+        await session.delete(user)
+        await session.commit()

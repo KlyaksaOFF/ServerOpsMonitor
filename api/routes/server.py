@@ -22,6 +22,7 @@ from repositories.server_repository import (
     list_user_connected_servers,
     remove_all_where_ip,
     remove_server_by_server_id,
+    remove_user_admin,
 )
 from services.server_check import result_check_server
 
@@ -158,6 +159,7 @@ async def admin_main(request: Request):
     current_user_id = int(request.cookies.get("user_id"))
 
     user_have_admin = await check_admin_user_id(current_user_id)
+
     if user_have_admin:
         count_value_unique_users = await count_unique_users()
         count_value_unique_servers = await count_unique_servers()
@@ -181,10 +183,7 @@ async def admin_main(request: Request):
         return response
 
     else:
-        return templates.TemplateResponse(
-            name='admin.html',
-            request=request,
-            context={'user_have_admin': user_have_admin})
+        return HTMLResponse(status_code=403)
 
 
 @router.delete('/admin/{server_ip}/delete-all')
@@ -213,24 +212,42 @@ async def permission_menu_add_new_admin(
         new_admin_id: Annotated[str, Form()]
     ):
 
-    current_admin_id = int(request.cookies.get("user_id"))
-    result_add = await add_new_admin(
-        current_admin_id=current_admin_id,
-        new_admin_id=int(new_admin_id),
-    )
+    current_user_id = int(request.cookies.get("user_id"))
+    result_check = await check_admin_user_id(current_user_id)
+    if result_check:
+        try:
+            result_add = await add_new_admin(
+                current_admin_id=current_user_id,
+                new_admin_id=int(new_admin_id),
+            )
 
-    match result_add:
-        case True:
-            response = RedirectResponse(url='/admin/', status_code=303)
-            response.set_cookie("flash", "New admin added")
-            return response
-        case False:
+            match result_add:
+                case True:
+                    response = RedirectResponse(url='/admin/', status_code=303)
+                    response.set_cookie("flash", "New admin added")
+                    return response
+                case False:
+                    response = RedirectResponse(
+                        url='/admin/permission-menu/', status_code=303)
+                    response.set_cookie("flash", "Fail operation")
+                    return response
+        except:
             response = RedirectResponse(
                 url='/admin/permission-menu/', status_code=303)
-            response.set_cookie("flash", "Fail operation: user have admin")
+            response.set_cookie("flash", "Noname ERROR!")
             return response
+    else:
+        response = RedirectResponse(
+        url='/servers/', status_code=303)
+        response.set_cookie("flash", "You don't have permission!")
+        return response
 
+@router.delete('/admin/permission-menu/{user_id}')
+async def remove_from_admin(user_id):
+    await remove_user_admin(int(user_id))
 
-@router.delete('/admin/permission-menu/')
-async def remove_from_admin():
-    pass
+    response = RedirectResponse(
+    url='/admin/permission-menu/', status_code=303
+    )
+    response.set_cookie("flash", "Success! Admin removed")
+    return response

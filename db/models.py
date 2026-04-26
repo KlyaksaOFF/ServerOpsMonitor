@@ -25,6 +25,3 @@ class Admins(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger)
-    admin: Mapped[bool] = mapped_column(
-        Boolean, default=False, nullable=False
-    )

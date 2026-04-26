@@ -32,7 +32,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        /* FLASH */
         .flash {
             padding: 12px;
             border-radius: 8px;
@@ -154,19 +153,22 @@
 
     <div class="card">
 
-        <!-- FLASH -->
         {% if flash %}
             <div class="flash {% if 'Fail' in flash %}flash-error{% else %}flash-success{% endif %}">
                 {{ flash }}
             </div>
         {% endif %}
 
-        <!-- Admin list (пример, потом подставишь из backend) -->
         {% if admins %}
             {% for admin in admins %}
                 <div class="admin-item">
                     <div class="admin-name">{{ admin.user_id }}</div>
-                    <button class="btn btn-delete">Remove</button>
+                    <button
+                        class="btn btn-delete"
+                        data-user-id="{{ admin.user_id }}"
+                    >
+                        Remove
+                    </button>
                 </div>
             {% endfor %}
         {% else %}
@@ -175,7 +177,6 @@
             </div>
         {% endif %}
 
-        <!-- Add new admin -->
         <div class="add-section">
             <form method="post" action="/admin/permission-menu/">
                 <input
@@ -188,7 +189,6 @@
             </form>
         </div>
 
-        <!-- Navigation -->
         <div class="nav-buttons">
             <a href="/main_menu" class="btn-nav btn-main">Main Menu</a>
             <a href="/admin/" class="btn-nav btn-admin">Admin Panel</a>
@@ -196,6 +196,22 @@
 
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', async () => {
+            const userId = button.dataset.userId;
+
+            const response = await fetch(`/admin/permission-menu/${userId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
