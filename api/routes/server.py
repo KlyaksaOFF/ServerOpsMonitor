@@ -183,7 +183,10 @@ async def admin_main(request: Request):
         return response
 
     else:
-        return HTMLResponse(status_code=403)
+        response = RedirectResponse(
+            url='/servers/', status_code=303)
+        response.set_cookie("flash", "You don't have permission!")
+        return response
 
 
 @router.delete('/admin/{server_ip}/delete-all')
@@ -194,31 +197,39 @@ async def admin_delete_ip(server_ip):
 
 @router.get('/admin/permission-menu/')
 async def permission_menu(request: Request):
-    flash = request.cookies.get("flash")
-    admin_users = await all_admin_users()
+    current_user_id = int(request.cookies.get("user_id"))
+    result_check = await check_admin_user_id(current_user_id)
 
-    response = templates.TemplateResponse(
-    name='permission_menu.html',
-    request=request,
-    context={'flash': flash, 'admins': admin_users})
+    if result_check:
+        flash = request.cookies.get("flash")
+        admin_users = await all_admin_users()
 
-    response.delete_cookie('flash')
-    return response
+        response = templates.TemplateResponse(
+        name='permission_menu.html',
+        request=request,
+        context={'flash': flash, 'admins': admin_users})
+
+        response.delete_cookie('flash')
+        return response
+    else:
+        response = RedirectResponse(
+        url='/servers/', status_code=303)
+        response.set_cookie("flash", "You don't have permission!")
+        return response
 
 
 @router.post('/admin/permission-menu/')
 async def permission_menu_add_new_admin(
-        request: Request,
-        new_admin_id: Annotated[str, Form()]
-    ):
+        request: Request, new_admin_id: Annotated[str, Form()]
+):
 
     current_user_id = int(request.cookies.get("user_id"))
     result_check = await check_admin_user_id(current_user_id)
     if result_check:
         try:
             result_add = await add_new_admin(
-                current_admin_id=current_user_id,
-                new_admin_id=int(new_admin_id),
+            current_admin_id=current_user_id,
+            new_admin_id=int(new_admin_id),
             )
 
             match result_add:
@@ -231,16 +242,17 @@ async def permission_menu_add_new_admin(
                         url='/admin/permission-menu/', status_code=303)
                     response.set_cookie("flash", "Fail operation")
                     return response
-        except:
+        except Exception as e:
             response = RedirectResponse(
                 url='/admin/permission-menu/', status_code=303)
-            response.set_cookie("flash", "Noname ERROR!")
+            response.set_cookie("flash", f"Error: {e}")
             return response
     else:
         response = RedirectResponse(
         url='/servers/', status_code=303)
         response.set_cookie("flash", "You don't have permission!")
         return response
+
 
 @router.delete('/admin/permission-menu/{user_id}')
 async def remove_from_admin(user_id):

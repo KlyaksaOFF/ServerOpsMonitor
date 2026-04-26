@@ -212,10 +212,10 @@ async def all_admin_users():
 
 async def remove_user_admin(user_id):
     async with async_session() as session:
+        result = await session.execute(select(Admins).where(
+            Admins.user_id == user_id))
+        user = result.scalar_one_or_none()
 
-       result = await session.execute(select(Admins).where(Admins.user_id
-                                                       == user_id))
-       user = result.scalar_one_or_none()
-       if user:
-        await session.delete(user)
-        await session.commit()
+        if user:
+            await session.delete(user)
+            await session.commit()
