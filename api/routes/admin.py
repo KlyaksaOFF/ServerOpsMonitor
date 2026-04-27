@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from repositories.server_repository import (
@@ -19,6 +19,7 @@ from repositories.server_repository import (
 router = APIRouter()
 
 templates = Jinja2Templates(directory="api/templates")
+
 
 @router.get('/admin/', response_class=HTMLResponse)
 async def admin_main(request: Request):

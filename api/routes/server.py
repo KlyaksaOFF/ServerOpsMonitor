@@ -9,20 +9,11 @@ from fastapi.templating import Jinja2Templates
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
-    add_new_admin,
-    all_admin_users,
-    all_servers_ip,
-    all_users_id,
-    check_admin_user_id,
-    count_unique_servers,
-    count_unique_users,
     create_server,
     get_server_by_id,
     have_user_server,
     list_user_connected_servers,
-    remove_all_where_ip,
     remove_server_by_server_id,
-    remove_user_admin,
 )
 from services.server_check import result_check_server
 
