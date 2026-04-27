@@ -9,7 +9,6 @@ from utils.validate_ip import result_ip_api, result_ip_telegram
 
 async def list_user_connected_servers(user_id):
     async with async_session() as session:
-
         filter_result = await session.execute(
             select(ServerList).filter_by(user_id=user_id)
         )
@@ -29,7 +28,6 @@ async def get_server_by_id(server_id):
 
 async def create_server(ip, password, user_id):
     async with async_session() as session:
-
         server = ServerList(
             password=password,
             user_id=user_id,
@@ -47,7 +45,6 @@ async def process_add_server(server_ip, user_id, state: FSMContext):
         )
 
         server = filter_result.scalar_one_or_none()
-
         result = await result_ip_telegram(server, server_ip, state)
         return result
 
@@ -58,6 +55,7 @@ async def added_check_in_table_server(server, ping, uptime):
             update(ServerList).where(ServerList.ip == server.ip)
             .values(ping=ping, uptime=uptime)
         )
+
         await session.commit()
 
 
@@ -79,6 +77,7 @@ async def have_user_server(user_id, server_ip):
             server=server,
             server_ip=server_ip
         )
+
         return result_validate_ip
 
 
@@ -87,8 +86,8 @@ async def get_all_servers_autocheck():
         result = await session.execute(
     select(ServerList).filter_by(autocheck=True)
         )
-        servers = result.scalars().all()
 
+        servers = result.scalars().all()
         return servers
 
 
@@ -99,7 +98,6 @@ async def process_function_autocheck(server_id):
         )
 
         server = filter_process.scalar_one_or_none()
-
         match server.autocheck:
             case True:
                 server.autocheck = False
@@ -116,7 +114,6 @@ async def state_autocheck_server(server_id):
         )
 
         server = filter_process.scalar_one_or_none()
-
         return '❌Now AutoCheck off❌' if server else '✅Now AutoCheck on✅'
 
 
@@ -124,9 +121,7 @@ async def count_unique_users():
     async with async_session() as session:
         filter_process = await session.execute(
             select(func.count(distinct(ServerList.user_id))))
-
         unique_users = filter_process.scalar()
-
         return unique_users
 
 
@@ -134,9 +129,7 @@ async def count_unique_servers():
     async with async_session() as session:
         filter_process = await session.execute(
             select(func.count(distinct(ServerList.ip))))
-
         unique_servers = filter_process.scalar()
-
         return unique_servers
 
 
@@ -144,9 +137,7 @@ async def check_admin_user_id(user_id):
     async with async_session() as session:
         filter_process = await session.execute(
             select(Admins).filter_by(user_id=user_id))
-
         user = filter_process.scalar_one_or_none()
-
         return user
 
 
@@ -154,18 +145,14 @@ async def all_users_id():
     async with async_session() as session:
         filter_process = await session.execute(
             select(ServerList.user_id).distinct())
-
         users_ids = filter_process.scalars().all()
-
         return users_ids
 
 
 async def all_servers_ip():
     async with async_session() as session:
         filter_process = await session.execute(select(ServerList.ip).distinct())
-
         servers_ip = filter_process.scalars().all()
-
         return servers_ip
 
 
@@ -187,16 +174,15 @@ async def add_new_admin(current_admin_id, new_admin_id):
     async with async_session() as session:
         result_current_admin_id = await get_admin_by_user_id(
             current_admin_id, session)
-
         existing_new_admin = await get_admin_by_user_id(
             new_admin_id, session)
 
         if result_current_admin_id and not existing_new_admin:
             await session.execute(
                 insert(Admins).values(user_id=new_admin_id))
-
             await session.commit()
             return True
+
         return False
 
 
@@ -204,9 +190,7 @@ async def all_admin_users():
     async with async_session() as session:
         process_filter = await session.execute(
         select(Admins))
-
         users = process_filter.scalars().all()
-
         return users
 
 
