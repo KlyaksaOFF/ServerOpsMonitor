@@ -11,11 +11,11 @@ from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
     create_server,
     get_server_by_id,
-    have_user_server,
     list_user_connected_servers,
     remove_server_by_server_id,
 )
 from services.server_check import result_check_server
+from utils.validate_ip import result_ip_api
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -88,7 +88,7 @@ async def post_add_server(
     ):
 
     user_id = int(request.cookies.get("user_id"))
-    result_validate_server = await have_user_server(
+    result_validate_server = await result_ip_api(
         user_id=user_id,
         server_ip=ip
     )

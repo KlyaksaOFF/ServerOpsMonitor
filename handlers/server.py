@@ -10,7 +10,6 @@ from handlers.fsm_states import AddServer
 from repositories.server_repository import (
     create_server,
     get_server_by_id,
-    process_add_server,
     process_function_autocheck,
     remove_server_by_server_id,
     state_autocheck_server,
@@ -30,6 +29,7 @@ from texts.texts import (
     SERVER_CREATED,
     SERVER_IN_YOUR_LIST,
 )
+from utils.validate_ip import result_ip_telegram
 
 router = Router()
 
@@ -52,7 +52,7 @@ async def process_ip(message: types.Message, state: FSMContext):
         server_ip = message.text.strip()
         user_id = message.from_user.id
 
-        result_validate_server = await process_add_server(
+        result_validate_server = await result_ip_telegram(
             server_ip=server_ip,
             user_id=user_id,
             state=state
