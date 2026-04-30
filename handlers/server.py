@@ -29,7 +29,7 @@ from texts.texts import (
     SERVER_CREATED,
     SERVER_IN_YOUR_LIST,
 )
-from utils.validate_ip import result_ip_telegram
+from utils.utils_validate_ip import validate_result_ip_telegram
 
 router = Router()
 
@@ -52,7 +52,7 @@ async def process_ip(message: types.Message, state: FSMContext):
         server_ip = message.text.strip()
         user_id = message.from_user.id
 
-        result_validate_server = await result_ip_telegram(
+        result_validate_server = await validate_result_ip_telegram(
             server_ip=server_ip,
             user_id=user_id,
             state=state

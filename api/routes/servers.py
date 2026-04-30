@@ -15,7 +15,7 @@ from repositories.server_repository import (
     remove_server_by_server_id,
 )
 from services.server_check import result_check_server
-from utils.validate_ip import result_ip_api
+from utils.utils_validate_ip import validate_result_ip_api
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -88,7 +88,7 @@ async def post_add_server(
     ):
 
     user_id = int(request.cookies.get("user_id"))
-    result_validate_server = await result_ip_api(
+    result_validate_server = await validate_result_ip_api(
         user_id=user_id,
         server_ip=ip
     )

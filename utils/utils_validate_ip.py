@@ -21,7 +21,7 @@ class ValidateIP:
         return result_validate_ip
 
 
-async def result_ip_telegram(server_ip, user_id, state: FSMContext):
+async def validate_result_ip_telegram(server_ip, user_id, state: FSMContext):
     from repositories.server_repository import check_user_have_server_ip
     server = await check_user_have_server_ip(
         user_id=user_id, server_ip=server_ip)
@@ -30,24 +30,26 @@ async def result_ip_telegram(server_ip, user_id, state: FSMContext):
         if validate_ip.validate():
             await state.update_data(ip=server_ip)
             await state.set_state(AddServer.waiting_for_password)
+            logging.info('Input valid ip')
             return 'valid_ip'
         else:
+            logging.info('Input invalid ip')
             return 'invalid_ip'
-    # if server in db (telegram checking)
     logging.info('Server in db')
     return 'ip_in_db'
 
 
-async def result_ip_api(user_id, server_ip):
+async def validate_result_ip_api(user_id, server_ip):
     from repositories.server_repository import check_user_have_server_ip
     server = await check_user_have_server_ip(
         user_id=user_id, server_ip=server_ip)
     if not server:
         validate_ip = ValidateIP(server_ip)
         if validate_ip.validate():
+            logging.info('Input valid ip')
             return 'valid_ip'
         else:
+            logging.info('Input invalid ip')
             return 'invalid_ip'
-    # if server in db (web checking)
     logging.info('Server in db')
     return 'ip_in_db'
