@@ -3,16 +3,15 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from repositories.admins import (
+    add_new_admin,
+    all_admin_users,
+)
 from repositories.server_repository import (
     all_servers_ip,
     all_users_id,
     count_unique_servers,
     count_unique_users,
-)
-
-from repositories.admins import (
-    add_new_admin,
-    all_admin_users,
 )
 
 templates = Jinja2Templates(directory="api/templates")
