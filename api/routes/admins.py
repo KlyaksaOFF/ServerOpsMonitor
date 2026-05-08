@@ -4,11 +4,11 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from repositories.server_repository import (
+from repositories.admins import (
     check_admin_user_id,
-    remove_all_where_ip,
     remove_user_admin,
 )
+from repositories.server_repository import remove_all_where_ip
 from utils.utils_admin import (
     util_process_check_admin,
     util_process_permission_menu,

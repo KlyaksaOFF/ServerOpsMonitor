@@ -16,8 +16,11 @@ class ValidateIP:
                 return False
             if not 0 <= int(part) <= 255:
                 return False
-        result_validate_ip = (len(self.ip) > 0
-                              and len(parts_ip) == 4)
+
+        result_validate_ip = (
+                len(self.ip) > 0
+                and len(parts_ip) == 4
+        )
         return result_validate_ip
 
 
