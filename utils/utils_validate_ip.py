@@ -28,8 +28,12 @@ class ValidateIP:
 
 async def validate_result_ip_telegram(server_ip, user_id, state: FSMContext):
     from repositories.server_repository import check_user_have_server_ip
+
     server = await check_user_have_server_ip(
-        user_id=user_id, server_ip=server_ip)
+        user_id=user_id,
+        server_ip=server_ip
+    )
+
     if not server:
         validate_ip = ValidateIP(server_ip)
         if validate_ip.validate():
@@ -40,14 +44,19 @@ async def validate_result_ip_telegram(server_ip, user_id, state: FSMContext):
         else:
             logging.info('Input invalid ip')
             return 'invalid_ip'
+
     logging.info('Server in db')
     return 'ip_in_db'
 
 
 async def validate_result_ip_api(user_id, ip):
     from repositories.server_repository import check_user_have_server_ip
+
     server = await check_user_have_server_ip(
-        user_id=user_id, server_ip=ip)
+        user_id=user_id,
+        server_ip=ip
+    )
+
     if not server:
         validate_ip = ValidateIP(ip)
         if validate_ip.validate():
@@ -56,6 +65,7 @@ async def validate_result_ip_api(user_id, ip):
         else:
             logging.info('Input invalid ip')
             return 'invalid_ip'
+
     logging.info('Server in db')
     return 'ip_in_db'
 
@@ -67,8 +77,11 @@ class ProcessCreateServer:
         self.ip = ip
 
     async def validate_and_create_server(self):
-        result_validate_server = await validate_result_ip_api(
-            self.user_id, self.ip
+
+        result_validate_server = \
+            await validate_result_ip_api(
+            self.user_id,
+            self.ip
         )
 
         match result_validate_server:
