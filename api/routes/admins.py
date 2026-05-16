@@ -2,15 +2,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
 from utils.utils_admin_api import (
     ResultResponseAndRepository,
 )
 
 router = APIRouter()
-
-templates = Jinja2Templates(directory="api/templates")
 
 
 @router.get('/admin/', response_class=HTMLResponse)
