@@ -2,7 +2,7 @@ from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
-from utils.utils_keyboard import data_keyboard
+from utils.utils_keyboard import DataKeyboard
 
 router = Router()
 
@@ -11,7 +11,7 @@ router = Router()
 async def connected_servers(message: types.Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
-    keyboard_process = data_keyboard(user_id=user_id)
+    keyboard_process = DataKeyboard(user_id=user_id)
     servers = await keyboard_process.servers()
 
     if not servers:

@@ -6,7 +6,7 @@ from repositories.server_repository import (
 )
 
 
-class data_keyboard:
+class DataKeyboard:
     def __init__(self, user_id=None):
         self.user_id = user_id
 
