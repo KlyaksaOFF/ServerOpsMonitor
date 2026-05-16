@@ -9,13 +9,12 @@ from fastapi.templating import Jinja2Templates
 
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.server_repository import (
-    create_server,
     get_server_by_id,
     list_user_connected_servers,
     remove_server_by_server_id,
 )
 from services.server_check import result_check_server
-from utils.utils_validate_ip import validate_result_ip_api
+from utils.utils_validate_ip import ResponseValidate
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -36,8 +35,8 @@ async def index(request: Request):
 
 @router.post('/login')
 async def login(user: dict, response: Response):
-    result = await verify_telegram_data(user)
-    if result:
+    result_verify = await verify_telegram_data(user)
+    if result_verify:
         user_id = user.get('id')
         await add_cookie_user_login(user_id=user_id, response=response)
         return {'status': 'ok', "user": user.get('first_name')}
@@ -88,26 +87,9 @@ async def post_add_server(
     ):
 
     user_id = int(request.cookies.get("user_id"))
-    result_validate_server = await validate_result_ip_api(
-        user_id=user_id,
-        server_ip=ip
-    )
-
-    match result_validate_server:
-
-        case "valid_ip":
-            await create_server(user_id=user_id, password=password, ip=ip)
-            response = RedirectResponse(url='/servers', status_code=303)
-            response.set_cookie("flash", "Server added successfully")
-            return response
-        case "invalid_ip":
-            response = RedirectResponse(url='/servers/add', status_code=303)
-            response.set_cookie("flash", "Invalid ip")
-            return response
-        case _:
-            response = RedirectResponse(url='/servers/add', status_code=303)
-            response.set_cookie("flash", "Server in your list")
-            return response
+    response = ResponseValidate(user_id=user_id, password=password, ip=ip)
+    return await (
+        response.validate())
 
 
 @router.post('/servers/{user_id}/{server_id}')
