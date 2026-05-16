@@ -1,82 +1,43 @@
-import asyncio
-from os import getenv
 from typing import Annotated
 
-from dotenv import load_dotenv
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
-from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, Response
 
-from api.routes.login import add_cookie_user_login, verify_telegram_data
-from repositories.server_repository import (
-    get_server_by_id,
-    list_user_connected_servers,
-    remove_server_by_server_id,
-)
-from services.server_check import result_check_server
-from utils.utils_validate_ip import ProcessCreateServer
+from utils.utils_servers_api import ResponseApiServers
 
-templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
-
-load_dotenv()
-
-telegram_bot_login = (getenv("BOT_LOGIN"))
 
 
 @router.get('/', response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse(
-    name='index.html',
-    request=request,
-    context={'telegram_bot_login': telegram_bot_login}
-    )
+    response = ResponseApiServers()
+    return await response.index(request=request)
 
 
 @router.post('/login')
 async def login(user: dict, response: Response):
-    result_verify = await verify_telegram_data(user)
-    if result_verify:
-        user_id = user.get('id')
-        await add_cookie_user_login(user_id=user_id, response=response)
-        return {'status': 'ok', "user": user.get('first_name')}
-    response.status_code = 401
-    return {'status': 'Error', 'message': 'Invalid data'}
+    login_response = ResponseApiServers()
+    return await login_response.login(user=user, response=response)
 
 
 @router.get('/main_menu', response_class=HTMLResponse)
 async def main_menu(request: Request):
-    return templates.TemplateResponse(name='main_menu.html',
-                                      request=request)
+    response = ResponseApiServers()
+    return await response.main_menu(request=request)
 
 
 @router.get('/servers', response_class=HTMLResponse)
 async def servers(request: Request):
     user_id = int(request.cookies.get("user_id"))
-    list_servers_user = await list_user_connected_servers(user_id)
-    flash = request.cookies.get("flash")
+    response = ResponseApiServers(user_id=user_id)
 
-    response = templates.TemplateResponse(
-        name='servers.html',
-        request=request,
-        context={'servers': list_servers_user,
-                 'user_id': user_id,
-                 'flash': flash}
-    )
-
-    response.delete_cookie('flash')
-    return response
+    return await response.servers(request=request)
 
 
 @router.get('/servers/add')
 async def get_add_server(request: Request):
-    flash = request.cookies.get("flash")
-
-    response = templates.TemplateResponse(
-        name='add_server.html', request=request, context={'flash': flash})
-
-    response.delete_cookie('flash')
-    return response
+    response = ResponseApiServers()
+    return await response.get_add_server(request=request)
 
 
 @router.post('/servers/add')
@@ -87,40 +48,28 @@ async def post_add_server(
     ):
 
     user_id = int(request.cookies.get("user_id"))
-    response = ProcessCreateServer(user_id=user_id, password=password, ip=ip)
-    return await response.validate_and_create_server()
+    response = ResponseApiServers(user_id=user_id, password=password, ip=ip)
+    return await response.post_add_server(request=request)
 
 
 @router.post('/servers/{user_id}/{server_id}')
 async def check_server(user_id: int, server_id: int):
-    server = await get_server_by_id(server_id)
-    if server:
-        task = asyncio.create_task(result_check_server(server=server))
-        await task
-        return RedirectResponse(
-            url=f'/servers/{user_id}/{server_id}',
-            status_code=303
-        )
-    return {'status': 'Error', 'message': 'Invalid data'}
+    response = ResponseApiServers(user_id=user_id, server_id=server_id)
+    return await response.check_server()
 
 
 @router.delete('/servers/{user_id}/{server_id}')
 async def remove_server(user_id: int, server_id: int):
-    await remove_server_by_server_id(server_id)
-    return RedirectResponse(url='/servers', status_code=303)
+    response = ResponseApiServers(user_id=user_id, server_id=server_id)
+    return await response.remove_server()
 
 
 @router.get('/servers/{user_id}/{server_id}', response_class=HTMLResponse)
 async def info_server(user_id: int, server_id: int, request: Request):
-    server = await get_server_by_id(server_id)
     current_user_id = int(request.cookies.get("user_id"))
+    response = ResponseApiServers(
+        user_id=user_id,
+        server_id=server_id,
+        current_user_id=current_user_id)
 
-    return templates.TemplateResponse(
-        name='info_server.html',
-        request=request,
-        context={
-            'user_id': user_id,
-            'server': server,
-            'current_user_id': current_user_id
-        }
-    )
+    return await response.info_server(request)

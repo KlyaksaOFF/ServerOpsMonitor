@@ -1,0 +1,125 @@
+import asyncio
+from os import getenv
+
+from dotenv import load_dotenv
+from fastapi import Request
+from fastapi.responses import RedirectResponse, Response
+from fastapi.templating import Jinja2Templates
+
+from api.routes.login import add_cookie_user_login, verify_telegram_data
+from repositories.server_repository import (
+    get_server_by_id,
+    list_user_connected_servers,
+    remove_server_by_server_id,
+)
+from services.server_check import result_check_server
+from utils.utils_validate_ip import ProcessCreateServer
+
+load_dotenv()
+
+templates = Jinja2Templates(directory="api/templates")
+telegram_bot_login = (getenv("BOT_LOGIN"))
+
+
+class RequestToRepository:
+    async def get_server(self, server_id: int):
+        return await get_server_by_id(server_id=server_id)
+
+    async def list_con_servers(self, user_id: int):
+        return await list_user_connected_servers(user_id=user_id)
+
+    async def remove_server(self, server_id: int):
+        return await remove_server_by_server_id(server_id=server_id)
+
+
+class ResponseApiServers(RequestToRepository):
+    def __init__(self,
+                 user_id=None,
+                 server_id=None,
+                 password=None,
+                 ip=None,
+                 current_user_id=None):
+
+        self.user_id = user_id
+        self.server_id = server_id
+        self.password = password
+        self.ip = ip
+        self.current_user_id = current_user_id
+
+    async def index(self, request: Request):
+        return templates.TemplateResponse(
+            name='index.html',
+            request=request,
+            context={'telegram_bot_login': telegram_bot_login}
+        )
+
+    async def login(self, response: Response, user):
+        result_verify = await verify_telegram_data(user)
+        if result_verify:
+            user_id = user.get('id')
+            await add_cookie_user_login(user_id=user_id, response=response)
+            return {'status': 'ok', "user": user.get('first_name')}
+        response.status_code = 401
+        return {'status': 'Error', 'message': 'Invalid data'}
+
+    async def main_menu(self, request: Request):
+        return templates.TemplateResponse(name='main_menu.html',
+                                          request=request)
+
+    async def servers(self, request: Request):
+        list_servers_user = await self.list_con_servers(user_id=self.user_id)
+        flash = request.cookies.get("flash")
+
+        response = templates.TemplateResponse(
+            name='servers.html',
+            request=request,
+            context={
+            'servers': list_servers_user,
+            'user_id': self.user_id,
+            'flash': flash
+            })
+
+        response.delete_cookie('flash')
+        return response
+
+    async def get_add_server(self, request: Request):
+        flash = request.cookies.get("flash")
+
+        response = templates.TemplateResponse(
+            name='add_server.html', request=request, context={'flash': flash})
+
+        response.delete_cookie('flash')
+        return response
+
+    async def post_add_server(self, request: Request):
+        response = ProcessCreateServer(
+            user_id=self.user_id,
+            password=self.password,
+            ip=self.ip)
+
+        return await response.validate_and_create_server()
+
+    async def check_server(self):
+        server = await self.get_server(server_id=self.server_id)
+        if server:
+            task = asyncio.create_task(result_check_server(server=server))
+            await task
+            return RedirectResponse(
+                url=f'/servers/{self.user_id}/{self.server_id}',
+                status_code=303
+            )
+        return {'status': 'Error', 'message': 'Invalid data'}
+
+    async def remove_server(self):
+        await remove_server_by_server_id(self.server_id)
+        return RedirectResponse(url='/servers', status_code=303)
+
+    async def info_server(self, request: Request):
+        server = await self.get_server(self.server_id)
+        return templates.TemplateResponse(
+        name='info_server.html',
+        request=request,
+        context={
+        'user_id': self.user_id,
+        'server': server,
+        'current_user_id': self.current_user_id})
