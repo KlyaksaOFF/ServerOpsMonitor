@@ -22,13 +22,16 @@ telegram_bot_login = (getenv("BOT_LOGIN"))
 
 
 class RequestToRepository:
-    async def get_server(self, server_id: int):
+    @staticmethod
+    async def get_server(server_id: int):
         return await get_server_by_id(server_id=server_id)
 
-    async def list_con_servers(self, user_id: int):
+    @staticmethod
+    async def list_con_servers(user_id: int):
         return await list_user_connected_servers(user_id=user_id)
 
-    async def remove_server(self, server_id: int):
+    @staticmethod
+    async def remove_server(server_id: int):
         return await remove_server_by_server_id(server_id=server_id)
 
 
@@ -46,6 +49,7 @@ class ResponseApiServers(RequestToRepository):
         self.ip = ip
         self.current_user_id = current_user_id
 
+    @staticmethod
     async def index(self, request: Request):
         return templates.TemplateResponse(
             name='index.html',
@@ -53,7 +57,8 @@ class ResponseApiServers(RequestToRepository):
             context={'telegram_bot_login': telegram_bot_login}
         )
 
-    async def login(self, response: Response, user):
+    @staticmethod
+    async def login(response: Response, user):
         result_verify = await verify_telegram_data(user)
         if result_verify:
             user_id = user.get('id')
@@ -62,7 +67,8 @@ class ResponseApiServers(RequestToRepository):
         response.status_code = 401
         return {'status': 'Error', 'message': 'Invalid data'}
 
-    async def main_menu(self, request: Request):
+    @staticmethod
+    async def main_menu(request: Request):
         return templates.TemplateResponse(name='main_menu.html',
                                           request=request)
 
@@ -82,7 +88,8 @@ class ResponseApiServers(RequestToRepository):
         response.delete_cookie('flash')
         return response
 
-    async def get_add_server(self, request: Request):
+    @staticmethod
+    async def get_add_server(request: Request):
         flash = request.cookies.get("flash")
 
         response = templates.TemplateResponse(

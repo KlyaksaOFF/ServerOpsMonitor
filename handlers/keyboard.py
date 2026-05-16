@@ -2,10 +2,7 @@ from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
-from repositories.server_repository import (
-    list_user_connected_servers,
-    state_autocheck_server,
-)
+from utils.utils_keyboard import data_keyboard
 
 router = Router()
 
@@ -14,24 +11,13 @@ router = Router()
 async def connected_servers(message: types.Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
-    servers = await list_user_connected_servers(user_id)
+    keyboard_process = data_keyboard(user_id=user_id)
+    servers = await keyboard_process.servers()
+
     if not servers:
         return await message.answer("You don't have servers")
 
-    buttons = []
-
-    for server in servers:
-        buttons.append([types.InlineKeyboardButton(
-        text=server.ip, callback_data=f'server_{server.id}'),
-        types.InlineKeyboardButton(
-        text='check', callback_data=f'check_{server.id}'),
-        types.InlineKeyboardButton(text='update',
-        callback_data=f'update_{server.id}'),
-        types.InlineKeyboardButton(text='remove',
-        callback_data=f'remove_{server.id}'),
-        types.InlineKeyboardButton(text=await state_autocheck_server(server.id),
-        callback_data=f'autocheck_{server.id}')])
-    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    keyboard = await keyboard_process.result_keyboard(servers=servers)
     return await message.answer("Select server", reply_markup=keyboard)
 
 
