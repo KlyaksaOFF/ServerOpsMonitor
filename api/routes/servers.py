@@ -14,7 +14,7 @@ from repositories.server_repository import (
     remove_server_by_server_id,
 )
 from services.server_check import result_check_server
-from utils.utils_validate_ip import ResponseValidate
+from utils.utils_validate_ip import ProcessCreateServer
 
 templates = Jinja2Templates(directory="api/templates")
 router = APIRouter()
@@ -87,9 +87,8 @@ async def post_add_server(
     ):
 
     user_id = int(request.cookies.get("user_id"))
-    response = ResponseValidate(user_id=user_id, password=password, ip=ip)
-    return await (
-        response.validate())
+    response = ProcessCreateServer(user_id=user_id, password=password, ip=ip)
+    return await response.validate_and_create_server()
 
 
 @router.post('/servers/{user_id}/{server_id}')

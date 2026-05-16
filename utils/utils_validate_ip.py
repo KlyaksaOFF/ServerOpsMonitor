@@ -60,13 +60,13 @@ async def validate_result_ip_api(user_id, ip):
     return 'ip_in_db'
 
 
-class ResponseValidate:
+class ProcessCreateServer:
     def __init__(self, user_id, password, ip):
         self.user_id = user_id
         self.password = password
         self.ip = ip
 
-    async def validate(self):
+    async def validate_and_create_server(self):
         result_validate_server = await validate_result_ip_api(
             self.user_id, self.ip
         )
