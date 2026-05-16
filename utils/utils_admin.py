@@ -84,10 +84,10 @@ class ResultResponseAndRepository:
                     current_admin_id=current_user_id,
                     new_admin_id=int(new_admin_id),
                 )
-
                 match result_add:
                     case True:
-                        response = RedirectResponse(url='/admin/', status_code=303)
+                        response = RedirectResponse(url='/admin/',
+                                                    status_code=303)
                         response.set_cookie("flash", "New admin added")
                         return response
                     case False:

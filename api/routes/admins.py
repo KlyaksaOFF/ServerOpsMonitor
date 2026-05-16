@@ -25,6 +25,7 @@ async def admin_delete_ip(ip):
     response = ResultResponseAndRepository(user_id=None)
     return await response.util_response_remove_all_ip(ip=ip)
 
+
 @router.get('/admin/permission-menu/')
 async def permission_menu(request: Request):
     current_user_id = int(request.cookies.get("user_id"))
