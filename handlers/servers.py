@@ -1,5 +1,3 @@
-import logging
-
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -7,13 +5,6 @@ from aiogram.types import CallbackQuery
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
 from handlers.fsm_states import AddServer
-from repositories.server_repository import (
-    create_server,
-    get_server_by_id,
-    process_function_autocheck,
-    remove_server_by_server_id,
-    state_autocheck_server,
-)
 from services.server_check import (
     result_check_server,
 )
@@ -22,14 +13,10 @@ from services.server_update import (
 )
 from texts.texts import (
     ENTER_IP,
-    ERROR_FORMAT_IP,
-    ERROR_INVALID_IP,
     NOT_SERVER,
-    SEND_PASSWORD,
     SERVER_CREATED,
-    SERVER_IN_YOUR_LIST,
 )
-from utils.utils_validate_ip import validate_result_ip_telegram
+from utils.utils_servers_bot import ResponseBotServers
 
 router = Router()
 
@@ -48,43 +35,31 @@ async def add_server_start(message: types.Message, state: FSMContext):
 
 @router.message(AddServer.waiting_for_ip)
 async def process_ip(message: types.Message, state: FSMContext):
-    try:
-        server_ip = message.text.strip()
-        user_id = message.from_user.id
+    server_ip = message.text.strip()
+    user_id = message.from_user.id
+    response = ResponseBotServers(ip=server_ip, user_id=user_id)
 
-        result_validate_server = await validate_result_ip_telegram(
-            server_ip=server_ip,
-            user_id=user_id,
-            state=state
-        )
-        if result_validate_server == "valid_ip":
-            return await message.answer(SEND_PASSWORD)
-        elif result_validate_server == "invalid_ip":
-            return await message.answer(ERROR_INVALID_IP)
-        else:
-            return await message.answer(SERVER_IN_YOUR_LIST)
-    except AttributeError:
-        return await message.answer(ERROR_FORMAT_IP)
+    await response.process_ip(state=state, message=message)
 
 
 @router.message(AddServer.waiting_for_password)
 async def process_password(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    await create_server(ip=data.get('ip'),
-                        user_id=message.from_user.id,
-                        password=message.text
-                        )
-    await message.answer(SERVER_CREATED)
-    logging.info('Server created')
+    response = ResponseBotServers(
+        ip=data.get('ip'),
+        user_id=message.from_user.id,
+        password=message.text)
 
+    await response.process_password()
+    await message.answer(SERVER_CREATED)
     await state.clear()
 
 
 @router.callback_query(F.data.startswith("server_"))
 async def ip_server(callback: CallbackQuery):
     server_id = int(callback.data.split("_")[1])
-
-    server = await get_server_by_id(server_id)
+    response = ResponseBotServers(server_id=server_id)
+    server = await response.get_server()
 
     if not server:
         return await callback.answer(NOT_SERVER, show_alert=True)
@@ -96,8 +71,8 @@ async def ip_server(callback: CallbackQuery):
 async def info_server(callback: CallbackQuery):
 
     server_id = int(callback.data.split("_")[1])
-
-    server = await get_server_by_id(server_id)
+    response = ResponseBotServers(server_id=server_id)
+    server = await response.get_server()
 
     if not server:
         return await callback.answer(NOT_SERVER, show_alert=True)
@@ -112,9 +87,8 @@ async def info_server(callback: CallbackQuery):
 async def remove_server(callback: CallbackQuery):
     try:
         server_id = int(callback.data.split("_")[1])
-
-        await remove_server_by_server_id(server_id)
-
+        response = ResponseBotServers(server_id=server_id)
+        await response.remove_server()
         await callback.message.answer('Server removed')
 
     except UnmappedInstanceError:
@@ -127,7 +101,8 @@ async def remove_server(callback: CallbackQuery):
 async def update_server(callback: CallbackQuery):
     server_id = int(callback.data.split("_")[1])
 
-    server = await get_server_by_id(server_id)
+    response = ResponseBotServers(server_id=server_id)
+    server = await response.get_server()
 
     if not server:
         return await callback.answer(NOT_SERVER, show_alert=True)
@@ -146,12 +121,13 @@ async def update_server(callback: CallbackQuery):
 @router.callback_query(F.data.startswith("autocheck_"))
 async def authcheck_function(callback: CallbackQuery):
     server_id = int(callback.data.split("_")[1])
-    server = await get_server_by_id(server_id)
+    response = ResponseBotServers(server_id=server_id)
+    server = await response.get_server()
 
     if not server:
         return await callback.answer(NOT_SERVER, show_alert=True)
 
-    await process_function_autocheck(server_id)
+    await response.autocheck_process()
 
-    state_server = await state_autocheck_server(server_id)
+    state_server = await response.autocheck_state()
     return await callback.message.answer(state_server)
