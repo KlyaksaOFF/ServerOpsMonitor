@@ -72,7 +72,8 @@ async def process_password(message: types.Message, state: FSMContext):
     data = await state.get_data()
     await create_server(ip=data.get('ip'),
                         user_id=message.from_user.id,
-                        password=message.text)
+                        password=message.text
+                        )
     await message.answer(SERVER_CREATED)
     logging.info('Server created')
 
