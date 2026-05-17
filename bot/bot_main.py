@@ -25,6 +25,7 @@ commands = [
     BotCommand(command="servers", description="ServersMenu"),
 ]
 
+
 async def main() -> None:
     await init_db()
     bot = Bot(
