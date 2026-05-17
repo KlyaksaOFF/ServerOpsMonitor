@@ -6,6 +6,7 @@ from os import getenv
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.types import BotCommand
 from dotenv import load_dotenv
 
 from db.db import init_db
@@ -20,13 +21,16 @@ dp = Dispatcher()
 dp.include_router(router_keyboard)
 dp.include_router(router_main)
 
+commands = [
+    BotCommand(command="servers", description="ServersMenu"),
+]
 
 async def main() -> None:
     await init_db()
     bot = Bot(
         token=TOKEN,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
+    await bot.set_my_commands(commands)
     asyncio.create_task(auto_check_servers(bot))
     await dp.start_polling(bot)
 
