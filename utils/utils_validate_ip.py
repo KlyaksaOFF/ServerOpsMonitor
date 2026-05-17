@@ -90,9 +90,7 @@ class ProcessCreateServer:
                 await create_server(
                     user_id=self.user_id,
                     password=self.password,
-                    ip=self.ip
-                )
-
+                    ip=self.ip)
                 response = RedirectResponse(url='/servers', status_code=303)
                 response.set_cookie("flash", "Server added successfully")
                 return response

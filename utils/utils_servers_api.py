@@ -50,7 +50,7 @@ class ResponseApiServers(RequestToRepository):
         self.current_user_id = current_user_id
 
     @staticmethod
-    async def index(self, request: Request):
+    async def index(request: Request):
         return templates.TemplateResponse(
             name='index.html',
             request=request,
@@ -98,7 +98,7 @@ class ResponseApiServers(RequestToRepository):
         response.delete_cookie('flash')
         return response
 
-    async def post_add_server(self, request: Request):
+    async def post_add_server(self):
         response = ProcessCreateServer(
             user_id=self.user_id,
             password=self.password,
