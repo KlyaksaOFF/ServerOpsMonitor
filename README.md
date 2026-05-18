@@ -88,4 +88,4 @@ Quick Start
 
     db/: SQLAlchemy models and database connection setup.
 
-    utils/: Helper functions like IP address validation.
+    utils/: Helper function.
