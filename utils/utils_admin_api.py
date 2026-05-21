@@ -22,6 +22,7 @@ templates = Jinja2Templates(directory="api/templates")
 
 class ResultResponseAndRepository:
     def __init__(self, user_id):
+        self.user_have_admin = None
         self.user_id = user_id
 
     async def result_check_user_from_admin(self):
@@ -48,11 +49,10 @@ class ResultResponseAndRepository:
             response.delete_cookie('flash')
             return response
 
-        else:
-            response = RedirectResponse(
-                url='/servers/', status_code=303)
-            response.set_cookie("flash", "You don't have permission!")
-            return response
+        response = RedirectResponse(
+            url='/servers/', status_code=303)
+        response.set_cookie("flash", "You don't have permission!")
+        return response
 
     async def util_response_permission_menu(self, request: Request):
         await self.result_check_user_from_admin()
@@ -67,11 +67,11 @@ class ResultResponseAndRepository:
 
             response.delete_cookie('flash')
             return response
-        else:
-            response = RedirectResponse(
-                url='/servers/', status_code=303)
-            response.set_cookie("flash", "You don't have permission!")
-            return response
+
+        response = RedirectResponse(
+            url='/servers/', status_code=303)
+        response.set_cookie("flash", "You don't have permission!")
+        return response
 
     async def util_response_permission_menu_add_new_admin(self,
             current_user_id,
@@ -100,21 +100,21 @@ class ResultResponseAndRepository:
                     url='/admin/permission-menu/', status_code=303)
                 response.set_cookie("flash", f"Error: {e}")
                 return response
-        else:
-            response = RedirectResponse(
-                url='/servers/', status_code=303)
-            response.set_cookie("flash", "You don't have permission!")
-            return response
+
+        response = RedirectResponse(
+            url='/servers/', status_code=303)
+        response.set_cookie("flash", "You don't have permission!")
+        return response
 
     async def util_response_remove_from_admins(self):
         await remove_user_admin(self.user_id)
         response = RedirectResponse(
-            url='/admin/permission-menu/', status_code=303
-        )
+            url='/admin/permission-menu/', status_code=303)
         response.set_cookie("flash", "Success! Admin removed")
         return response
 
-    async def util_response_remove_all_ip(self, ip):
+    @staticmethod
+    async def util_response_remove_all_ip(ip):
         await remove_all_where_ip(ip)
         response = RedirectResponse(url='/admin', status_code=303)
         return response
