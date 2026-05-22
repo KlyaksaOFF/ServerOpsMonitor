@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Checker</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .top-nav {
+            max-width: 800px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        .btn-nav {
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            background: #475569;
+            color: white;
+        }
+
+        .btn-nav:hover {
+            background: #334155;
+        }
+
+        /* ALERT NOTIFICATIONS */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 240px;
+            max-width: 340px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            border: 1px solid transparent;
+            animation: fadeIn 0.25s ease;
+            z-index: 1000;
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+        }
+
+        .alert-title {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .alert-text {
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto 50px;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* FORM & INPUTS */
+        .checker-form {
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-url {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #e2e8f0;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-url:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-check {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-check:hover {
+            background: #2563eb;
+        }
+
+        /* DATA SECTION */
+        .results-section {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .no-data {
+            color: #94a3b8;
+            font-size: 14px;
+            font-style: italic;
+            margin: 0;
+            text-align: center;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .info-table th, .info-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .info-table th {
+            color: #94a3b8;
+            font-weight: 600;
+            width: 30%;
+        }
+
+        .info-table td {
+            color: #f1f5f9;
+            word-break: break-all;
+        }
+
+        .info-table tr:last-child th, .info-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="/main_menu/" class="btn-nav">Main Menu</a>
+    </div>
+
+    {% if flash %}
+        <div class="alert {% if status == 'success' %}success{% else %}error{% endif %}">
+            <span class="alert-title">{% if status == 'success' %}Success{% else %}Error{% endif %}</span>
+            <div class="alert-text">{{ flash }}</div>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <h1>🔗 URL Checker</h1>
+
+        <div class="checker-form">
+            <form action="/checkurl/" method="POST" class="form-group">
+                <input type="url"
+                       name="url"
+                       class="input-url"
+                       placeholder="https://example.com"
+                       required
+                       autocomplete="off">
+                <button type="submit" class="btn-check">Проверить</button>
+            </form>
+        </div>
+
+        <div class="results-section">
+            {% if status %}
+                <table class="info-table">
+                    <tr>
+                        <th>Status Code</th>
+                        <td>{{ status }}</td>
+                    </tr>
+                    <tr>
+                        <th>Encoding</th>
+                        <td>{{ encoding if encoding else 'None' }}</td>
+                    </tr>
+                    {% if headers %}
+                    <tr>
+                        <th>Content-Type</th>
+                        <td>{{ headers.get('Content-Type', 'Not specified') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ headers.get('Date') }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            {% else %}
+                <p class="no-data">No data yet</p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
