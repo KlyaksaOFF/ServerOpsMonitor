@@ -1,11 +1,13 @@
-import requests
 from typing import Annotated
+
+import requests
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
 templates = Jinja2Templates(directory="api/templates")
+
 
 @router.get('/checkurl/', response_class=HTMLResponse)
 async def checkurl_main(request: Request):
