@@ -31,14 +31,12 @@ class ResponseApiServers(RequestToRepository):
         self.ip = ip
         self.current_user_id = current_user_id
 
-
     @staticmethod
     async def index(request: Request):
         return templates.TemplateResponse(
             name='index.html',
             request=request,
             context={'telegram_bot_login': telegram_bot_login})
-
 
     @staticmethod
     async def login(response: Response, user):
@@ -50,12 +48,10 @@ class ResponseApiServers(RequestToRepository):
         response.status_code = 401
         return {'status': 'Error', 'message': 'Invalid data'}
 
-
     @staticmethod
     async def main_menu(request: Request):
         return templates.TemplateResponse(name='main_menu.html',
                                           request=request)
-
 
     async def servers(self, request: Request):
         list_servers_user = await self.list_con_servers(user_id=self.user_id)
@@ -70,7 +66,6 @@ class ResponseApiServers(RequestToRepository):
         response.delete_cookie('flash')
         return response
 
-
     @staticmethod
     async def get_add_server(request: Request):
         flash = request.cookies.get("flash")
@@ -79,14 +74,12 @@ class ResponseApiServers(RequestToRepository):
         response.delete_cookie('flash')
         return response
 
-
     async def post_add_server(self):
         response = ProcessCreateServer(
             user_id=self.user_id,
             password=self.password,
             ip=self.ip)
         return await response.validate_and_create_server()
-
 
     async def check_server(self):
         server = await self.get_server(server_id=self.server_id)
@@ -98,11 +91,9 @@ class ResponseApiServers(RequestToRepository):
                 status_code=303)
         return {'status': 'Error', 'message': 'Invalid data'}
 
-
     async def remove_server(self):
         await self.remove_server_by_server_id(self.server_id)
         return RedirectResponse(url='/servers', status_code=303)
-
 
     async def info_server(self, request: Request):
         server = await self.get_server(self.server_id)
