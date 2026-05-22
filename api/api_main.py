@@ -5,7 +5,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from api.routes import admins, login, servers
+from api.routes import admins, login, servers, check_url
 from db.db import init_db
 
 app = FastAPI()
@@ -14,6 +14,7 @@ port = int(getenv("PORT"))
 app.include_router(servers.router)
 app.include_router(login.router)
 app.include_router(admins.router)
+app.include_router(check_url.router)
 
 load_dotenv()
 
