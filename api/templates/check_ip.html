@@ -206,12 +206,6 @@
         <a href="/main_menu/" class="btn-nav">Main Menu</a>
     </div>
 
-    {% if flash %}
-        <div class="alert {% if status == 'success' %}success{% else %}error{% endif %}">
-            <span class="alert-title">{% if status == 'success' %}Success{% else %}Error{% endif %}</span>
-            <div class="alert-text">{{ flash }}</div>
-        </div>
-    {% endif %}
 
     <div class="container">
         <h1>🔍 IP Checker</h1>
@@ -221,7 +215,7 @@
         </div>
 
         <div class="checker-form">
-            <form action="/checkip/" method="POST" class="form-group">
+            <form action="/ip/" method="POST" class="form-group">
                 <input type="text"
                        name="ip_address"
                        class="input-url"
@@ -248,8 +242,8 @@
                         <td>{{ result_data.get('city') }}</td>
                     </tr>
                     <tr>
-                        <th>Provider (ISP)</th>
-                        <td>{{ result_data.get('isp') }}</td>
+                        <th>Provider</th>
+                        <td>{{ result_data.get('org') }}</td>
                     </tr>
                 </table>
             {% else %}

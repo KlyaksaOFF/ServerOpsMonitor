@@ -18,3 +18,6 @@ api-start:
 
 docker-logs:
 	docker compose logs -f bot
+
+fuser-80:
+	sudo fuser -k 80/tcp
