@@ -1,3 +1,4 @@
+import asyncio
 from os import getenv
 from typing import Annotated
 
@@ -26,18 +27,20 @@ async def ip_main(request: Request):
 async def check_ip(request: Request, ip_address: Annotated[str, Form()]):
     try:
         handler = ipinfo.getHandler(token)
-        details = handler.getDetails(ip_address)
+        runner = await asyncio.to_thread(handler.getDetails, ip_address)
         result_data = {
             'ip': ip_address,
-            'org': details.org,
-            'country': details.country_name,
-            'city': details.city
+            'org': runner.org,
+            'country': runner.country_name,
+            'city': runner.city
         }
 
         response = templates.TemplateResponse(
             name='check_ip.html',
             request=request,
             context={'result_data': result_data})
+
         return response
+
     except ReadTimeout:
         return HTMLResponse('Timeout')
