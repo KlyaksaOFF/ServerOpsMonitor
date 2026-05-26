@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from requests.exceptions import ReadTimeout
 
 router = APIRouter()
 templates = Jinja2Templates(directory="api/templates")
@@ -38,5 +39,5 @@ async def check_ip(request: Request, ip_address: Annotated[str, Form()]):
             request=request,
             context={'result_data': result_data})
         return response
-    except Exception:
-        return HTMLResponse('Too many requests')
+    except ReadTimeout:
+        return HTMLResponse('Timeout')
