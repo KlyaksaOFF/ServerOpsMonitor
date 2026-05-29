@@ -251,6 +251,12 @@
             {% endif %}
         </div>
     </div>
-
+    <div>
+        {% if error %}
+        <script>
+            alert("{{ error }}");
+        </script>
+        {% endif %}
+    </div>
 </body>
 </html>
