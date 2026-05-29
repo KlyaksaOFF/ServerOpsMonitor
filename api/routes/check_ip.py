@@ -47,25 +47,25 @@ async def check_ip(request: Request, ip_address: Annotated[str, Form()]):
         return response
 
     except Timeout:
-        error = 'Error: Timeout request to api, try again.'
+        error = 'Timeout request to api, try again.'
         response = templates.TemplateResponse(
             name='check_ip.html',
             request=request,
-            context={'error': error})
+            context={'flash': error})
         return response
 
     except RequestException:
-        error = 'Error: API request failed.'
+        error = 'API request failed.'
         response = templates.TemplateResponse(
             name='check_ip.html',
             request=request,
-            context={'error': error})
+            context={'flash': error})
         return response
 
     except (ValueError, TypeError):
-        error = 'Error: ValueError or TypeError.'
+        error = 'ValueError or TypeError.'
         response = templates.TemplateResponse(
             name='check_ip.html',
             request=request,
-            context={'error': error})
+            context={'flash': error})
         return response

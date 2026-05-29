@@ -47,8 +47,9 @@
             color: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
             border: 1px solid transparent;
-            animation: fadeIn 0.25s ease;
             z-index: 1000;
+            /* Изменено на контролируемые из JS анимации */
+            animation: fadeIn 0.25s ease forwards;
         }
 
         .alert.success {
@@ -79,6 +80,18 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        /* Добавлена анимация для плавного скрытия */
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
             }
         }
 
@@ -201,15 +214,34 @@
     </style>
 </head>
 <body>
+    {% if flash %}
+        <div id="flash-alert" class="alert {% if 'Error' in flash %}error{% else %}success{% endif %}">
+            {% if 'Error' in flash %}
+                <span class="alert-title">Error</span>
+            {% else %}
+                <span class="alert-title">Success</span>
+            {% endif %}
+            <div class="alert-text">{{ flash }}</div>
+        </div>
+
+        <script>
+            setTimeout(() => {
+                const alertEl = document.getElementById('flash-alert');
+                if (alertEl) {
+                    alertEl.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => alertEl.remove(), 300);
+                }
+            }, 4000);
+        </script>
+    {% endif %}
 
     <div class="top-nav">
         <a href="/main_menu/" class="btn-nav">Main Menu</a>
     </div>
 
-
     <div class="container">
         <h1>🔍 IP Checker</h1>
-        
+
         <div class="user-ip-box">
             Your ip: <strong>{{ user_ip if user_ip else '0.0.0.0' }}</strong>
         </div>
@@ -250,13 +282,6 @@
                 <p class="no-data">No data yet</p>
             {% endif %}
         </div>
-    </div>
-    <div>
-        {% if error %}
-        <script>
-            alert("{{ error }}");
-        </script>
-        {% endif %}
     </div>
 </body>
 </html>
