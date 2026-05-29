@@ -49,7 +49,7 @@ async def validate_result_ip_telegram(server_ip, user_id, state: FSMContext):
     return 'ip_in_db'
 
 
-async def validate_result_ip_api(user_id, ip):
+async def validate_result_ip_api(ip, user_id):
     from repositories.server_repository import check_user_have_server_ip
 
     server = await check_user_have_server_ip(

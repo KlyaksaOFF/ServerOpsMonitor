@@ -8,7 +8,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from requests.exceptions import RequestException, Timeout
-
+from utils.utils_validate_ip import ValidateIP
 router = APIRouter()
 templates = Jinja2Templates(directory="api/templates")
 token = getenv("IPINFO_TOKEN")
@@ -25,7 +25,11 @@ async def ip_main(request: Request):
 
 @router.post('/ip/', response_class=HTMLResponse)
 async def check_ip(request: Request, ip_address: Annotated[str, Form()]):
+    validate_ip = ValidateIP(ip=ip_address).validate()
     try:
+        if not validate_ip:
+            raise ValueError
+
         handler = ipinfo.getHandler(token)
         runner = await asyncio.to_thread(handler.getDetails, ip_address)
         result_data = {
@@ -56,8 +60,8 @@ async def check_ip(request: Request, ip_address: Annotated[str, Form()]):
             context={'error': error})
         return response
 
-    except ValueError:
-        error = 'Error: ValueError.'
+    except (ValueError, TypeError):
+        error = 'Error: ValueError or TypeError.'
         response = templates.TemplateResponse(
             name='check_ip.html',
             request=request,
