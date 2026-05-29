@@ -8,7 +8,9 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from requests.exceptions import RequestException, Timeout
+
 from utils.utils_validate_ip import ValidateIP
+
 router = APIRouter()
 templates = Jinja2Templates(directory="api/templates")
 token = getenv("IPINFO_TOKEN")
