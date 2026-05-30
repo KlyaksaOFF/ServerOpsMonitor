@@ -1,3 +1,4 @@
+import asyncio
 from typing import Annotated
 
 import requests
@@ -18,12 +19,12 @@ async def checkurl_main(request: Request):
 
 @router.post('/checkurl/', response_class=HTMLResponse)
 async def checkurl_result(request: Request, url: Annotated[str, Form()]):
-    r = requests.get(url)
+    runner = await asyncio.to_thread(requests.get, url)
 
     response = templates.TemplateResponse(
         name='check_url.html', request=request, context={
-            'status': r.status_code,
-            'encoding': r.encoding,
-            'headers': r.headers,
+            'status': runner.status_code,
+            'encoding': runner.encoding,
+            'headers': runner.headers,
         })
     return response

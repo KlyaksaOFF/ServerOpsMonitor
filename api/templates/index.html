@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServerOps Monitor | Вход</title>
+    <title>ServerOps Monitor | Auth</title>
     <style>
         body {
             margin: 0;
@@ -56,7 +56,7 @@
 
 <div class="container">
     <h1>ServerOps Monitor</h1>
-    <p>Авторизуйтесь через Telegram для доступа к панели</p>
+    <p>Log in via Telegram to access the dashboard</p>
 
     <div id="telegram-login-container">
         <script async
@@ -83,19 +83,19 @@
             if (response.ok) {
                 window.location.href = "/main_menu";
             } else {
-                alert("Ошибка сервера при проверке данных.");
+                alert("Server error while checking data.");
             }
         })
         .catch(err => {
             console.error(err);
-            alert("Ошибка сети или сервера.");
+            alert("Network or server error.");
         });
     }
 
     setTimeout(() => {
         const iframe = document.querySelector('iframe[id^="telegram-login"]');
         if (!iframe) {
-            console.error("Виджет не загрузился. Проверьте домен в @BotFather.");
+            console.error("The widget didn't load. Check the domain in @BotFather.");
         }
     }, 5000);
 </script>
