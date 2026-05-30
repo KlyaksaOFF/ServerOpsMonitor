@@ -20,7 +20,6 @@ async def checkurl_main(request: Request):
 @router.post('/checkurl/', response_class=HTMLResponse)
 async def checkurl_result(request: Request, url: Annotated[str, Form()]):
     runner = await asyncio.to_thread(requests.get, url)
-
     response = templates.TemplateResponse(
         name='check_url.html', request=request, context={
             'status': runner.status_code,

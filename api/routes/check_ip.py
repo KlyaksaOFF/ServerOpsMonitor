@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from ipinfo.error import APIError
 from requests.exceptions import RequestException, Timeout
 
 from utils.utils_validate_ip import ValidateIP
@@ -64,6 +65,22 @@ async def check_ip(request: Request, ip_address: Annotated[str, Form()]):
 
     except (ValueError, TypeError):
         error = 'ValueError or TypeError.'
+        response = templates.TemplateResponse(
+            name='check_ip.html',
+            request=request,
+            context={'flash': error})
+        return response
+
+    except APIError:
+        error = 'Error for Api.'
+        response = templates.TemplateResponse(
+            name='check_ip.html',
+            request=request,
+            context={'flash': error})
+        return response
+
+    except Exception as e:
+        error = f'Unknow error [{e}]'
         response = templates.TemplateResponse(
             name='check_ip.html',
             request=request,
