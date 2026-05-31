@@ -80,8 +80,8 @@ class ProcessCreateServer:
 
         result_validate_server = \
             await validate_result_ip_api(
-            self.user_id,
-            self.ip
+            ip=self.ip,
+            user_id=self.user_id
         )
 
         match result_validate_server:
