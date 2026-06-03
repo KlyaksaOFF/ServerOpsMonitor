@@ -30,6 +30,10 @@ jobs:
         run: |     
           make lint
 
+      - name: Check api-tests
+        run: |     
+          make api-test          
+
       - name: Build Docker image
         run: |     
           make build
