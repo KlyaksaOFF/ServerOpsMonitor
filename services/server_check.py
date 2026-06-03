@@ -33,15 +33,22 @@ def take_data_check_server(runner):
     result_check = {"status": runner.status}
     for event in runner.events:
         event_data = event.get('event_data')
-        if event.get('event') == 'runner_on_ok':
-            task_name = event_data.get('task')
-            res = event_data.get('res')
-            print(res)
-            match task_name:
-                case 'ping test':
-                    result_check['ping'] = res.get('ping')
-                case 'uptime server':
-                    result_check['uptime'] = res.get('stdout')
+        res = event_data.get('res', {})
+
+        if 'msg' in res:
+            result_check['msg'] = res.get('msg')
+
+        if event.get('event') != 'runner_on_ok':
+            continue
+
+        task_name = event_data.get('task')
+
+        match task_name:
+            case 'ping test':
+                result_check['ping'] = res.get('ping')
+            case 'uptime server':
+                result_check['uptime'] = res.get('stdout')
+
     return result_check
 
 
@@ -51,6 +58,7 @@ async def result_check_server(server):
     uptime = result_check.get('uptime')
     ping = result_check.get('ping')
     status = result_check.get('status')
+    msg = result_check.get('msg')
     code = runner.rc
     await added_check_in_table_server(server, ping, uptime)
     return (
@@ -59,10 +67,11 @@ async def result_check_server(server):
         f"Ping: {ping} \n"
         f"Uptime: {uptime}\n"
         f"Code: {code}\n"
-        f"Status: {status}"
+        f"Status: {status} \n"
         if code == 0 else
         "CHECK SERVER: \n\n"
         f"❌ {server.ip} \n\n"
         f"Code error: {code} \n"
-        f"Status: {status}"
+        f"Status: {status} \n"
+        f"Msg: {msg}"
     )
