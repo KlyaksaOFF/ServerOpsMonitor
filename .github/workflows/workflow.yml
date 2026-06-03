@@ -38,5 +38,7 @@ jobs:
       - name: Check api-tests
         env:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
+          HOST: 0.0.0.0
+          PORT: 80
         run: |     
           make api-test
