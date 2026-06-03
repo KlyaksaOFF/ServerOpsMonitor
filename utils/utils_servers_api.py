@@ -34,7 +34,7 @@ class ResponseApiServers(RequestToRepository):
 
     @staticmethod
     async def index(request: Request):
-        return templates_servers.TemplateResponse(
+        return templates_main.TemplateResponse(
             name='auth.html',
             request=request,
             context={'telegram_bot_login': telegram_bot_login})
