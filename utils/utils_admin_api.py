@@ -17,7 +17,7 @@ from repositories.server_repository import (
     remove_all_where_ip,
 )
 
-templates = Jinja2Templates(directory="api/templates")
+templates = Jinja2Templates(directory="api/templates/admins")
 
 
 class ResultResponseAndRepository:

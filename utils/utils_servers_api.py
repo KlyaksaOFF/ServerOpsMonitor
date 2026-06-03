@@ -13,7 +13,8 @@ from utils.utils_validate_ip import ProcessCreateServer
 
 load_dotenv()
 
-templates = Jinja2Templates(directory="api/templates")
+templates_servers = Jinja2Templates(directory="api/templates/servers")
+templates_main = Jinja2Templates(directory="api/templates")
 telegram_bot_login = (getenv("BOT_LOGIN"))
 
 
@@ -33,8 +34,8 @@ class ResponseApiServers(RequestToRepository):
 
     @staticmethod
     async def index(request: Request):
-        return templates.TemplateResponse(
-            name='index.html',
+        return templates_servers.TemplateResponse(
+            name='auth.html',
             request=request,
             context={'telegram_bot_login': telegram_bot_login})
 
@@ -50,13 +51,13 @@ class ResponseApiServers(RequestToRepository):
 
     @staticmethod
     async def main_menu(request: Request):
-        return templates.TemplateResponse(name='main_menu.html',
+        return templates_main.TemplateResponse(name='index.html',
                                           request=request)
 
     async def servers(self, request: Request):
         list_servers_user = await self.list_con_servers(user_id=self.user_id)
         flash = request.cookies.get("flash")
-        response = templates.TemplateResponse(
+        response = templates_servers.TemplateResponse(
             name='servers.html',
             request=request,
             context={
@@ -69,7 +70,7 @@ class ResponseApiServers(RequestToRepository):
     @staticmethod
     async def get_add_server(request: Request):
         flash = request.cookies.get("flash")
-        response = templates.TemplateResponse(
+        response = templates_servers.TemplateResponse(
             name='add_server.html', request=request, context={'flash': flash})
         response.delete_cookie('flash')
         return response
@@ -97,7 +98,7 @@ class ResponseApiServers(RequestToRepository):
 
     async def info_server(self, request: Request):
         server = await self.get_server(self.server_id)
-        return templates.TemplateResponse(
+        return templates_servers.TemplateResponse(
         name='info_server.html',
         request=request,
         context={

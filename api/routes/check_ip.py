@@ -13,7 +13,7 @@ from requests.exceptions import RequestException, Timeout
 from utils.utils_validate_ip import ValidateIP
 
 router = APIRouter()
-templates = Jinja2Templates(directory="api/templates")
+templates = Jinja2Templates(directory="api/templates/checkers")
 token = getenv("IPINFO_TOKEN")
 load_dotenv()
 
