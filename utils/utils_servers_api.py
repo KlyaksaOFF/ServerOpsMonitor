@@ -104,4 +104,5 @@ class ResponseApiServers(RequestToRepository):
         context={
         'user_id': self.user_id,
         'server': server,
-        'current_user_id': self.current_user_id})
+        'current_user_id': self.current_user_id
+        })
