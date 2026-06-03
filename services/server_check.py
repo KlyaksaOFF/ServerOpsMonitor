@@ -60,7 +60,13 @@ async def result_check_server(server):
     status = result_check.get('status')
     msg = result_check.get('msg')
     code = runner.rc
-    await added_check_in_table_server(server, ping, uptime)
+    await added_check_in_table_server(
+        server=server,
+        ping=ping,
+        uptime=uptime,
+        msg=msg
+    )
+
     return (
         "CHECK SERVER: \n\n"
         f"✅ {server.ip} \n\n"

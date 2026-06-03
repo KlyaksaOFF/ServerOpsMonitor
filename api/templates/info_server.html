@@ -48,6 +48,13 @@
             font-weight: 500;
             text-align: right;
             word-break: break-word;
+            max-width: 420px;
+        }
+
+        .message {
+            color: #fca5a5;
+            white-space: pre-wrap;
+            text-align: left;
         }
 
         .status {
@@ -160,20 +167,25 @@
 <body>
 
 <div class="container">
+
     {% if user_id != current_user_id %}
+
         <h1>⛔ Access denied</h1>
 
         <div class="card error-card">
-            <h2 class="error-title">Вам не доступна данная страница</h2>
+            <h2 class="error-title">This page is not available</h2>
+
             <p class="error-text">
-                Ваш айди не совпадает с владельцем
+                Your user ID does not match the server owner.
             </p>
 
             <div class="actions">
                 <a href="/servers" class="btn btn-back">← Back</a>
             </div>
         </div>
+
     {% else %}
+
         <h1>🖥️ Server #{{ server.id }}</h1>
 
         <div class="card">
@@ -189,7 +201,7 @@
             </div>
 
             <div class="row">
-                <div class="label">Current user ID</div>
+                <div class="label">Current User ID</div>
                 <div class="value">{{ current_user_id }}</div>
             </div>
 
@@ -218,42 +230,57 @@
             <div class="row">
                 <div class="label">Uptime</div>
                 <div class="value">
-                    {% if server.uptime %}
-                        {{ server.uptime }}
-                    {% else %}
-                        unknown
-                    {% endif %}
+                    {{ server.uptime if server.uptime else "unknown" }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="label">Message</div>
+                <div class="value message">
+                    {{ server.msg if server.msg else "no message" }}
                 </div>
             </div>
 
             <div class="actions">
-                <a href="/servers" class="btn btn-back">← Back</a>
 
-                <form method="post" action="/servers/{{ user_id }}/{{ server.id }}" class="inline-form">
+                <a href="/servers" class="btn btn-back">
+                    ← Back
+                </a>
+
+                <form method="post"
+                      action="/servers/{{ user_id }}/{{ server.id }}"
+                      class="inline-form">
+
                     <button type="submit" class="btn btn-check">
-                        ⚡ Check server
+                        ⚡ Check Server
                     </button>
+
                 </form>
 
                 <button
                     class="btn btn-delete"
-                    onclick="deleteServer({{ user_id }}, {{ server.id }})"
-                >
-                    🗑 Remove
+                    onclick="deleteServer({{ user_id }}, {{ server.id }})">
+
+                    🗑 Remove Server
+
                 </button>
+
             </div>
 
         </div>
 
         <script>
-        async function deleteServer(userId, serverId) {
-            await fetch(`/servers/${userId}/${serverId}`, {
-                method: 'DELETE'
-            });
-            window.location.href = '/servers';
-        }
+            async function deleteServer(userId, serverId) {
+                await fetch(`/servers/${userId}/${serverId}`, {
+                    method: 'DELETE'
+                });
+
+                window.location.href = '/servers';
+            }
         </script>
+
     {% endif %}
+
 </div>
 
 </body>

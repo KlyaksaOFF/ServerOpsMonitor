@@ -45,11 +45,11 @@ async def check_user_have_server_ip(server_ip, user_id):
         return server
 
 
-async def added_check_in_table_server(server, ping, uptime):
+async def added_check_in_table_server(server, ping, uptime, msg):
     async with async_session() as session:
         await session.execute(
             update(ServerList).where(ServerList.ip == server.ip)
-            .values(ping=ping, uptime=uptime)
+            .values(ping=ping, uptime=uptime, msg=msg)
         )
 
         await session.commit()

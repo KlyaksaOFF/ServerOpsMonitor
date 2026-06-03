@@ -15,6 +15,7 @@ class ServerList(Base):
     user_id: Mapped[int] = mapped_column(BigInteger)
     ping: Mapped[str] = mapped_column(String(20), nullable=True)
     uptime: Mapped[str] = mapped_column(String(100), nullable=True)
+    msg: Mapped[str] = mapped_column(String(1000), nullable=True)
     autocheck: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False
     )
