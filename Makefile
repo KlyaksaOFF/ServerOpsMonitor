@@ -10,6 +10,9 @@ install:
 build:
 	docker compose up --build -d
 
+docker-run:
+	docker compose up -d
+
 bot-start:
 	uv run python -m bot.bot_main
 

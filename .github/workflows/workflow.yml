@@ -26,14 +26,17 @@ jobs:
         run: |
           make install
 
+      - name: Docker
+        run: |     
+          make build
+          make docker-run
+
       - name: Run linter
         run: |     
           make lint
 
       - name: Check api-tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
         run: |     
-          make api-test          
-
-      - name: Build Docker image
-        run: |     
-          make build
+          make api-test
