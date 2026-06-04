@@ -35,6 +35,7 @@ async def servers(request: Request):
     except Exception as e:
         return f"Error: {e}"
 
+
 @router.get('/servers/add')
 async def get_add_server(request: Request):
     response = ResponseApiServers()
