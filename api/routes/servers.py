@@ -28,11 +28,12 @@ async def main_menu(request: Request):
 
 @router.get('/servers', response_class=HTMLResponse)
 async def servers(request: Request):
-    user_id = int(request.cookies.get("user_id"))
-    response = ResponseApiServers(user_id=user_id)
-
-    return await response.servers(request=request)
-
+    try:
+        user_id = int(request.cookies.get("user_id"))
+        response = ResponseApiServers(user_id=user_id)
+        return await response.servers(request=request)
+    except Exception as e:
+        return f"Error: {e}"
 
 @router.get('/servers/add')
 async def get_add_server(request: Request):
@@ -44,12 +45,15 @@ async def get_add_server(request: Request):
 async def post_add_server(
         request: Request,
         password: Annotated[str, Form()],
-        ip: Annotated[str, Form()]
+        ip: Annotated[str, Form()],
+        response_class=HTMLResponse
     ):
-
-    user_id = int(request.cookies.get("user_id"))
-    response = ResponseApiServers(user_id=user_id, password=password, ip=ip)
-    return await response.post_add_server()
+    try:
+        user_id = int(request.cookies.get("user_id"))
+        response = ResponseApiServers(user_id=user_id, password=password, ip=ip)
+        return await response.post_add_server()
+    except Exception as e:
+        return f"Error: {e}"
 
 
 @router.post('/servers/{user_id}/{server_id}')
@@ -66,10 +70,13 @@ async def remove_server(user_id: int, server_id: int):
 
 @router.get('/servers/{user_id}/{server_id}', response_class=HTMLResponse)
 async def info_server(user_id: int, server_id: int, request: Request):
-    current_user_id = int(request.cookies.get("user_id"))
-    response = ResponseApiServers(
-        user_id=user_id,
-        server_id=server_id,
-        current_user_id=current_user_id)
+    try:
+        current_user_id = int(request.cookies.get("user_id"))
+        response = ResponseApiServers(
+            user_id=user_id,
+            server_id=server_id,
+            current_user_id=current_user_id)
+    except Exception as e:
+        return f"Error: {e}"
 
     return await response.info_server(request)
