@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, RedirectResponse
 
 from utils.utils_servers_api import ResponseApiServers
 
@@ -33,7 +33,7 @@ async def servers(request: Request):
         response = ResponseApiServers(user_id=user_id)
         return await response.servers(request=request)
     except Exception as e:
-        return f"Error: {e}"
+        return RedirectResponse('/')
 
 
 @router.get('/servers/add')
@@ -54,7 +54,7 @@ async def post_add_server(
         response = ResponseApiServers(user_id=user_id, password=password, ip=ip)
         return await response.post_add_server()
     except Exception as e:
-        return f"Error: {e}"
+        return RedirectResponse('/')
 
 
 @router.post('/servers/{user_id}/{server_id}')
@@ -78,6 +78,6 @@ async def info_server(user_id: int, server_id: int, request: Request):
             server_id=server_id,
             current_user_id=current_user_id)
     except Exception as e:
-        return f"Error: {e}"
+        return RedirectResponse('/')
 
     return await response.info_server(request)
