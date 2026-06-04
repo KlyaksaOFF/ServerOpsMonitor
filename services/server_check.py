@@ -7,7 +7,7 @@ from repositories.server_repository import added_check_in_table_server
 
 async def check_server(server):
     runner_args = {
-        'inventory': server.ip,
+        'inventory': f"{server.ip}",
         'passwords': {'password': server.password},
         'extravars': {'ansible_user': 'root',
                    'ansible_ssh_pass': server.password,
@@ -32,14 +32,15 @@ async def check_server(server):
 def take_data_check_server(runner):
     result_check = {"status": runner.status}
     for event in runner.events:
-        event_data = event.get('event_data')
-        res = event_data.get('res', {})
-
-        if 'msg' in res:
-            result_check['msg'] = res.get('msg')
-
-        if event.get('event') != 'runner_on_ok':
+        if not event:
             continue
+
+        event_data = event.get('event_data') or {}
+        event_name = event.get('event')
+        res = event_data.get('res') or {}
+
+        if event_name in ('runner_on_failed', 'runner_on_unreachable'):
+            result_check['msg'] = res.get('msg')
 
         task_name = event_data.get('task')
 
