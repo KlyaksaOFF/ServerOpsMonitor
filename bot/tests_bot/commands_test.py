@@ -7,7 +7,7 @@ from telethon import TelegramClient
 from telethon.sessions import StringSession
 
 load_dotenv()
-
+bot_login = (getenv("BOT_LOGIN"))
 
 @pytest_asyncio.fixture(scope="session")
 async def telegram_client():
@@ -29,7 +29,6 @@ async def telegram_client():
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_start(telegram_client):
-    bot_login = (getenv("BOT_LOGIN"))
 
     async with telegram_client.conversation(bot_login) as conv:
         await conv.send_message('/start')
@@ -41,7 +40,6 @@ async def test_start(telegram_client):
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_list_servers(telegram_client):
-    bot_login = (getenv("BOT_LOGIN"))
 
     async with telegram_client.conversation(bot_login) as conv:
         await conv.send_message('List connected servers')
@@ -52,7 +50,6 @@ async def test_list_servers(telegram_client):
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_add_server(telegram_client):
-    bot_login = (getenv("BOT_LOGIN"))
 
     async with telegram_client.conversation(bot_login) as conv:
         await conv.send_message('Add server')
