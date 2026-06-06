@@ -45,3 +45,14 @@ async def test_start(telegram_client):
         assert response is not None
         assert response.text == ("Enter the command "
         "/servers and click on the button you need.")
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_list_servers(telegram_client):
+    bot_login = (getenv("BOT_LOGIN"))
+
+    async with telegram_client.conversation(bot_login) as conv:
+        await conv.send_message('List connected servers')
+
+        response = await conv.get_response()
+        assert response is not None
+        assert response.text == "You don't have servers"
