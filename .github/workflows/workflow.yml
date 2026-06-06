@@ -39,7 +39,7 @@ jobs:
 
       - name: Check tests
         env:
-          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql+asyncpg://postgres:example@db:5432/my_database
           HOST: 0.0.0.0
           PORT: 80
           API_ID: ${{ secrets.API_ID }}
