@@ -9,9 +9,9 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 from dotenv import load_dotenv
 
+from bot.handlers.keyboard import router as router_keyboard
+from bot.handlers.servers import router as router_main
 from db.db import init_db
-from handlers.keyboard import router as router_keyboard
-from handlers.servers import router as router_main
 from utils.utils_check_server import auto_check_servers
 
 load_dotenv()

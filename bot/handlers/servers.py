@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
-from handlers.fsm_states import AddServer
+from bot.handlers.fsm_states import AddServer
 from services.server_check import (
     result_check_server,
 )

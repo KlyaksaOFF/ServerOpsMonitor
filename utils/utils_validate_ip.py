@@ -3,7 +3,7 @@ import logging
 from aiogram.fsm.context import FSMContext
 from fastapi.responses import RedirectResponse
 
-from handlers.fsm_states import AddServer
+from bot.handlers.fsm_states import AddServer
 from repositories.server_repository import create_server
 
 
