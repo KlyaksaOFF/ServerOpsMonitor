@@ -48,5 +48,12 @@ jobs:
           BOT_LOGIN: ${{ secrets.BOT_LOGIN }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          timeout 60s make bot-start || true
-          make test
+          timeout 60s make bot-start &
+          BOT_PID=$!
+        
+          sleep 10
+        
+          make test-bot
+          make test-api
+        
+          kill $BOT_PID || true
