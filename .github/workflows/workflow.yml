@@ -46,4 +46,3 @@ jobs:
           BOT_LOGIN: ${{ secrets.BOT_LOGIN }}
         run: |     
           make test
-отменить add git
