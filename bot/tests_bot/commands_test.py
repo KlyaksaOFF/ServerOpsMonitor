@@ -46,6 +46,7 @@ async def test_start(telegram_client):
         assert response.text == ("Enter the command "
         "/servers and click on the button you need.")
 
+
 @pytest.mark.asyncio(loop_scope="session")
 async def test_list_servers(telegram_client):
     bot_login = (getenv("BOT_LOGIN"))
