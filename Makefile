@@ -25,5 +25,8 @@ docker-logs:
 fuser-80:
 	sudo fuser -k 80/tcp
 
-test:
-	uv run pytest
+test-api:
+	uv run pytest api
+
+test-bot:
+	uv run pytest bot
