@@ -13,7 +13,7 @@ load_dotenv()
 async def telegram_client():
     api_id = int(getenv("API_ID"))
     api_hash = getenv("API_HASH")
-    session = getenv("STRING_SESSION")
+    session = getenv("STRING_SESSION").strip()
 
     client = TelegramClient(
         StringSession(session),
