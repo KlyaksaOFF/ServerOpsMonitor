@@ -40,7 +40,6 @@ async def test_start(telegram_client):
 
     async with telegram_client.conversation(bot_login) as conv:
         await conv.send_message('/start')
-
         response = await conv.get_response()
         assert response is not None
         assert response.text == ("Enter the command "
@@ -53,7 +52,6 @@ async def test_list_servers(telegram_client):
 
     async with telegram_client.conversation(bot_login) as conv:
         await conv.send_message('List connected servers')
-
         response = await conv.get_response()
         assert response is not None
         assert response.text == "You don't have servers"
@@ -65,19 +63,22 @@ async def test_add_server(telegram_client):
 
     async with telegram_client.conversation(bot_login) as conv:
         await conv.send_message('Add server')
-
         response = await conv.get_response()
         assert response is not None
         assert response.text == "Enter the server IP"
 
         await conv.send_message('192.168.1.1')
-
         response = await conv.get_response()
         assert response is not None
         assert response.text == "Send password for ip"
 
         await conv.send_message('123456')
-
         response = await conv.get_response()
         assert response is not None
         assert response.text == "New server created in your list"
+
+        await conv.send_message('List connected servers')
+        response = await conv.get_response()
+        assert response is not None
+        if response.buttons:
+            await response.click(3)
