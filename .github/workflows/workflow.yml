@@ -44,7 +44,7 @@ jobs:
           PORT: 80
           API_ID: ${{ secrets.API_ID }}
           API_HASH: ${{ secrets.API_HASH }}
-          TELEGRAM_SESSION: ${{ secrets.TELEGRAM_SESSION }}
+          STRING_SESSION: ${{ secrets.STRING_SESSION }}
           BOT_LOGIN: ${{ secrets.BOT_LOGIN }}
         run: |     
           make test
