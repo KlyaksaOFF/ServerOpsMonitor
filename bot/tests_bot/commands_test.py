@@ -14,23 +14,16 @@ async def telegram_client():
     api_id = int(getenv("API_ID"))
     api_hash = getenv("API_HASH")
     session = getenv("STRING_SESSION").strip()
-
     client = TelegramClient(
         StringSession(session),
         api_id,
-        api_hash,
-    )
+        api_hash)
 
     await client.connect()
-
     if not await client.is_user_authorized():
         await client.disconnect()
         raise RuntimeError("StringSession is not authorized")
-
-    print(await client.get_me())
-
     yield client
-
     await client.disconnect()
 
 
