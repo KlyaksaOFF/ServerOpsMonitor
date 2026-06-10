@@ -7,6 +7,7 @@ from texts.texts import (
     SEND_PASSWORD,
     SERVER_IN_YOUR_LIST,
 )
+from utils.utils_password__encryption import EncryptionPassword
 from utils.utils_validate_ip import validate_result_ip_telegram
 
 
@@ -25,10 +26,11 @@ class ResponseBotServers(RequestToRepository):
         self.current_user_id = current_user_id
 
     async def process_password(self):
+        encrypted_password = EncryptionPassword().encode(self.password)
         await self.create_server(
             ip=self.ip,
             user_id=self.user_id,
-            password=self.password)
+            password=encrypted_password)
 
         logging.info('Server created')
 

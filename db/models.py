@@ -11,7 +11,7 @@ class ServerList(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     ip: Mapped[str] = mapped_column(String(45))
-    password: Mapped[str] = mapped_column(String(50))
+    password: Mapped[str] = mapped_column(String())
     user_id: Mapped[int] = mapped_column(BigInteger)
     ping: Mapped[str] = mapped_column(String(20), nullable=True)
     uptime: Mapped[str] = mapped_column(String(100), nullable=True)

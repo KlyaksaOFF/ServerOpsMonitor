@@ -30,3 +30,6 @@ test-api:
 
 test-bot:
 	uv run pytest bot
+
+make key:
+	python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"

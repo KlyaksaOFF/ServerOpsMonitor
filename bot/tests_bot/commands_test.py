@@ -9,6 +9,7 @@ from telethon.sessions import StringSession
 load_dotenv()
 bot_login = (getenv("BOT_LOGIN"))
 
+
 @pytest_asyncio.fixture(scope="session")
 async def telegram_client():
     api_id = int(getenv("API_ID"))

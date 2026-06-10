@@ -53,8 +53,8 @@ async def post_add_server(
         user_id = int(request.cookies.get("user_id"))
         response = ResponseApiServers(user_id=user_id, password=password, ip=ip)
         return await response.post_add_server()
-    except Exception:
-        return RedirectResponse('/')
+    except Exception as e:
+        return {e}
 
 
 @router.post('/servers/{user_id}/{server_id}')

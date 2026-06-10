@@ -3,14 +3,16 @@ import asyncio
 from ansible_runner import run
 
 from repositories.server_repository import added_check_in_table_server
+from utils.utils_password__encryption import EncryptionPassword
 
 
 async def check_server(server):
+    decrypted_password = EncryptionPassword().decode(server.password)
     runner_args = {
         'inventory': f"{server.ip}",
-        'passwords': {'password': server.password},
+        'passwords': {'password': decrypted_password},
         'extravars': {'ansible_user': 'root',
-                   'ansible_ssh_pass': server.password,
+                   'ansible_ssh_pass': decrypted_password,
                    'ansible_ssh_extra_args':
                        '-o PubkeyAuthentication=no '
                        '-o PreferredAuthentications=password'},

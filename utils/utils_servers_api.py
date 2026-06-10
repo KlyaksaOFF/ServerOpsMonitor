@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 from api.routes.login import add_cookie_user_login, verify_telegram_data
 from repositories.RequestToRepository import RequestToRepository
 from services.server_check import result_check_server
+from utils.utils_password__encryption import EncryptionPassword
 from utils.utils_validate_ip import ProcessCreateServer
 
 load_dotenv()
@@ -76,9 +77,10 @@ class ResponseApiServers(RequestToRepository):
         return response
 
     async def post_add_server(self):
+        encrypted_password = EncryptionPassword().encode(self.password)
         response = ProcessCreateServer(
             user_id=self.user_id,
-            password=self.password,
+            password=encrypted_password,
             ip=self.ip)
         return await response.validate_and_create_server()
 
