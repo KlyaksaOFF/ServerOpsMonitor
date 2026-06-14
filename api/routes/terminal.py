@@ -16,13 +16,22 @@ async def index_connect_terminal(request: Request):
         context={})
 
 
-@router.post('/connect_terminal')
+@router.post('/terminal')
 async def connect_terminal(
         request: Request,
         ip: Annotated[str, Form()],
         root: Annotated[str, Form()],
         password: Annotated[str, Form()]):
+
     return templates.TemplateResponse(
-        name='web_terminal_online.html',
+        name='terminal.html',
+        request=request,
+        context={})
+
+
+@router.get('/terminal/online', response_class=HTMLResponse)
+async def online_terminal(request: Request):
+    return templates.TemplateResponse(
+        name='terminal_web.html',
         request=request,
         context={})
