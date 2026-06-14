@@ -24,7 +24,7 @@ async def connect_terminal(
         password: Annotated[str, Form()]):
 
     return templates.TemplateResponse(
-        name='terminal.html',
+        name='terminal.h tml',
         request=request,
         context={})
 
@@ -32,6 +32,6 @@ async def connect_terminal(
 @router.get('/terminal/online', response_class=HTMLResponse)
 async def online_terminal(request: Request):
     return templates.TemplateResponse(
-        name='terminal_web.html',
-        request=request,
-        context={})
+    name='terminal_web.html',
+    request=request,
+    context={})

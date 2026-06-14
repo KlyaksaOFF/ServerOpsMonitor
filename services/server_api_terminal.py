@@ -6,6 +6,8 @@ ip = '123'
 user = 'root'
 password = '123'
 command = 'ps'
+
+
 def connect_terminal(ip, user, password):
     try:
         ssh = paramiko.SSHClient()
@@ -29,6 +31,7 @@ async def connect_ssh_to_server(ip, user, password):
 def send_remote_command_terminal(channel, command):
     channel.send(command + "\n")
 
+
 def read_output(channel):
     while True:
         if channel.recv_ready():
@@ -36,12 +39,14 @@ def read_output(channel):
             return data.decode()
         return ""
 
+
 async def output(ip, user, password):
     channel = await connect_ssh_to_server(ip, user, password)
     send_remote_command_terminal(channel, command='ps')
     await asyncio.sleep(0.5)
     output = await asyncio.to_thread(read_output, channel)
     return output
+
 
 result = asyncio.run(output(ip, user, password))
 print(result)
