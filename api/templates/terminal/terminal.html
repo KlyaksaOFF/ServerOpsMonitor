@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #020617;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header-card,
+        .connect-card,
+        .terminal-card {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+        }
+
+        .header-card {
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-card h1 {
+            margin: 0;
+            color: #f8fafc;
+            font-size: 32px;
+        }
+
+        .header-card p {
+            margin-top: 10px;
+            color: #94a3b8;
+        }
+
+        .status-connected {
+            color: #22c55e;
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .status-disconnected {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .connect-card {
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .connect-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #020617;
+            color: #e2e8f0;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .connect-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .connect-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .terminal-card {
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid #1e293b;
+            background: #111827;
+            font-family: monospace;
+        }
+
+        .terminal-window {
+            height: 600px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #020617;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .terminal-input-container {
+            border-top: 1px solid #1e293b;
+            padding: 16px;
+            background: #111827;
+        }
+
+        .terminal-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .terminal-input {
+            flex: 1;
+            font-family: Consolas, Monaco, monospace;
+        }
+
+        .execute-btn {
+            min-width: 120px;
+            border: none;
+            border-radius: 10px;
+            background: #16a34a;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .execute-btn:hover {
+            background: #15803d;
+        }
+
+        .prompt {
+            color: #38bdf8;
+        }
+
+        @media (max-width: 900px) {
+            .connect-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .terminal-form {
+                flex-direction: column;
+            }
+
+            .execute-btn {
+                height: 48px;
+            }
+
+            .header-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header-card">
+        <div class="header-top">
+            <h1>Terminal</h1>
+
+            {% if auth %}
+                <span class="status-connected">● Authorized</span>
+            {% else %}
+                <span class="status-disconnected">● Not Authorized</span>
+            {% endif %}
+        </div>
+
+        <p>Connect to a remote Linux server and execute commands.</p>
+    </div>
+
+    <form method="post" action="/terminal">
+        <div class="connect-card">
+
+            <div class="connect-grid">
+
+                <div class="form-group">
+                    <label for="ip">IP Address</label>
+                    <input
+                        id="ip"
+                        name="ip"
+                        type="text"
+                        placeholder="192.168.1.10"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="user">Username</label>
+                    <input
+                        id="user"
+                        name="user"
+                        type="text"
+                        placeholder="root"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="••••••••"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <button type="submit" class="connect-btn">
+                Connect
+            </button>
+
+        </div>
+    </form>
+
+    <div class="terminal-card">
+
+        <div class="terminal-header">
+            {% if auth %}
+                {{ user | default("root") }}@server:~#
+            {% else %}
+                disconnected@terminal:~#
+            {% endif %}
+        </div>
+
+        <div class="terminal-window">
+
+        {% if result %}
+
+            {{ result }}
+
+        {% elif auth %}
+
+            <span class="prompt">{{ user | default("root") }}@server:~#</span>
+
+        {% else %}
+
+            <span class="prompt">System:</span> Not authorized. Connect to server first.
+
+        {% endif %}
+
+        </div>
+
+        </div>
+
+        <div class="terminal-input-container">
+            <form method="post" action="/terminal/command" class="terminal-form">
+                <input
+                    class="terminal-input"
+                    type="text"
+                    name="command"
+                    placeholder="Enter command..."
+                    autocomplete="off"
+                    {% if not auth %}disabled{% endif %}
+                >
+
+                <button class="execute-btn" type="submit" {% if not auth %}disabled{% endif %}>
+                    Execute
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

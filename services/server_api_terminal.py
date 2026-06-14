@@ -1,11 +1,7 @@
 import asyncio
+import re
 
 import paramiko
-
-ip = '123'
-user = 'root'
-password = '123'
-command = 'ps'
 
 
 def connect_terminal(ip, user, password):
@@ -16,7 +12,7 @@ def connect_terminal(ip, user, password):
         channel = ssh.invoke_shell()
         return channel
     except Exception as error:
-        return error
+        raise error
 
 
 async def connect_ssh_to_server(ip, user, password):
@@ -48,5 +44,8 @@ async def output(ip, user, password):
     return output
 
 
-result = asyncio.run(output(ip, user, password))
-print(result)
+def clean_terminal_output(text: str) -> str:
+    ansi_escape = re.compile(
+        r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])'
+    )
+    return ansi_escape.sub('', text)
