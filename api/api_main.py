@@ -5,7 +5,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from api.routes import admins, check_ip, check_url, login, servers
+from api.routes import admins, check_ip, check_url, login, servers, terminal
 from db.db import init_db
 
 app = FastAPI()
@@ -16,6 +16,7 @@ app.include_router(login.router)
 app.include_router(admins.router)
 app.include_router(check_url.router)
 app.include_router(check_ip.router)
+app.include_router(terminal.router)
 load_dotenv()
 
 

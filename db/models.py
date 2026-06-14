@@ -26,3 +26,12 @@ class Admins(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger)
+
+
+class TerminalConnect(Base):
+    __tablename__ = 'terminal'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    ip: Mapped[str] = mapped_column(String(45))
+    password: Mapped[str] = mapped_column(String())
+    user_id: Mapped[int] = mapped_column(BigInteger)
