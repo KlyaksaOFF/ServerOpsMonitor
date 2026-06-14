@@ -1,7 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Request, Form
-from fastapi.responses import HTMLResponse, Response
+from fastapi import APIRouter, Form, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
