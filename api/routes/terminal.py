@@ -60,26 +60,21 @@ async def command_terminal(
     channel = active_session.get('channel')
 
     if channel is None:
-        return templates.TemplateResponse(
-            name='terminal.html',
-            request=request,
-            context={
-                'auth': False,
-                'result': 'Not connected'
-            })
+        return {
+            'auth': False,
+            'result': 'Not connected'
+        }
 
-    send_remote_command_terminal(channel, "ls --color=never")
+    await asyncio.to_thread(send_remote_command_terminal, channel, command)
 
     await asyncio.sleep(0.5)
 
     output = await asyncio.to_thread(read_output, channel)
     result = clean_terminal_output(output)
 
-    return templates.TemplateResponse(
-        name='terminal.html',
-        request=request,
-        context={
-    'auth': True,
-    'user': active_session['user'],
-    'command': command,
-    'result': result})
+    return {
+        'auth': True,
+        'user': active_session['user'],
+        'command': command,
+        'result': result
+    }

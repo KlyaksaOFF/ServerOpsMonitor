@@ -1,319 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Segoe UI", Tahoma, sans-serif;
-            background: #020617;
-            color: #e2e8f0;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .header-card,
-        .connect-card,
-        .terminal-card {
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            border-radius: 16px;
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
-        }
-
-        .header-card {
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-card h1 {
-            margin: 0;
-            color: #f8fafc;
-            font-size: 32px;
-        }
-
-        .header-card p {
-            margin-top: 10px;
-            color: #94a3b8;
-        }
-
-        .status-connected {
-            color: #22c55e;
-            font-weight: 700;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .status-disconnected {
-            color: #ef4444;
-            font-weight: 700;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .connect-card {
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .connect-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 8px;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        input {
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #020617;
-            color: #e2e8f0;
-            font-size: 15px;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: #38bdf8;
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-        }
-
-        .connect-btn {
-            margin-top: 20px;
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .connect-btn:hover {
-            background: #1d4ed8;
-        }
-
-        .terminal-card {
-            overflow: hidden;
-        }
-
-        .terminal-header {
-            padding: 14px 20px;
-            border-bottom: 1px solid #1e293b;
-            background: #111827;
-            font-family: monospace;
-        }
-
-        .terminal-window {
-            height: 600px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #020617;
-            font-family: Consolas, Monaco, monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-
-        .terminal-input-container {
-            border-top: 1px solid #1e293b;
-            padding: 16px;
-            background: #111827;
-        }
-
-        .terminal-form {
-            display: flex;
-            gap: 12px;
-        }
-
-        .terminal-input {
-            flex: 1;
-            font-family: Consolas, Monaco, monospace;
-        }
-
-        .execute-btn {
-            min-width: 120px;
-            border: none;
-            border-radius: 10px;
-            background: #16a34a;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .execute-btn:hover {
-            background: #15803d;
-        }
-
-        .prompt {
-            color: #38bdf8;
-        }
-
-        @media (max-width: 900px) {
-            .connect-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .terminal-form {
-                flex-direction: column;
-            }
-
-            .execute-btn {
-                height: 48px;
-            }
-
-            .header-top {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", Tahoma, sans-serif; background: #020617; color: #e2e8f0; }
+.container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+.header-card, .connect-card, .terminal-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; box-shadow: 0 18px 45px rgba(0,0,0,.35); }
+.header-card, .connect-card { padding: 24px; margin-bottom: 20px; }
+.header-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.header-card h1 { margin: 0; color: #f8fafc; font-size: 32px; }
+.header-card p { margin-top: 10px; color: #94a3b8; }
+.status-connected, .status-disconnected { font-weight: 700; font-size: 14px; white-space: nowrap; }
+.status-connected { color: #22c55e; }
+.status-disconnected { color: #ef4444; }
+.connect-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.form-group { display: flex; flex-direction: column; }
+label { margin-bottom: 8px; color: #94a3b8; font-size: 14px; }
+input { min-width: 0; padding: 12px 14px; border-radius: 10px; border: 1px solid #334155; background: #020617; color: #e2e8f0; font-size: 15px; outline: none; }
+input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+.connect-btn { margin-top: 20px; width: 100%; padding: 14px; border: none; border-radius: 10px; background: #2563eb; color: white; font-size: 15px; font-weight: 600; cursor: pointer; }
+.connect-btn:hover { background: #1d4ed8; }
+.terminal-card { overflow: hidden; }
+.terminal-header { padding: 14px 20px; border-bottom: 1px solid #1e293b; background: #111827; font-family: monospace; }
+.terminal-window { height: 600px; overflow: auto; padding: 20px; background: #020617; font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.terminal-input-container { border-top: 1px solid #1e293b; padding: 16px; background: #111827; }
+.terminal-form { display: flex; gap: 12px; }
+.terminal-input { flex: 1; font-family: Consolas, Monaco, monospace; }
+.execute-btn { min-width: 120px; border: none; border-radius: 10px; background: #16a34a; color: white; font-weight: 600; cursor: pointer; }
+.execute-btn:hover { background: #15803d; }
+button:disabled, input:disabled { opacity: .55; cursor: not-allowed; }
+.prompt { color: #38bdf8; }
+.error { color: #ef4444; }
+@media (max-width: 900px) { .connect-grid { grid-template-columns: 1fr; } .terminal-form { flex-direction: column; } .execute-btn { height: 48px; } .header-top { align-items: flex-start; flex-direction: column; } }
+</style>
 </head>
 <body>
-
 <div class="container">
-
     <div class="header-card">
         <div class="header-top">
             <h1>Terminal</h1>
-
-            {% if auth %}
-                <span class="status-connected">● Authorized</span>
-            {% else %}
-                <span class="status-disconnected">● Not Authorized</span>
-            {% endif %}
+            {% if auth %}<span class="status-connected">● Authorized</span>{% else %}<span class="status-disconnected">● Not Authorized</span>{% endif %}
         </div>
-
         <p>Connect to a remote Linux server and execute commands.</p>
     </div>
-
     <form method="post" action="/terminal">
         <div class="connect-card">
-
             <div class="connect-grid">
-
-                <div class="form-group">
-                    <label for="ip">IP Address</label>
-                    <input
-                        id="ip"
-                        name="ip"
-                        type="text"
-                        placeholder="192.168.1.10"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="user">Username</label>
-                    <input
-                        id="user"
-                        name="user"
-                        type="text"
-                        placeholder="root"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••••"
-                        required
-                    >
-                </div>
-
+                <div class="form-group"><label for="ip">IP Address</label><input id="ip" name="ip" type="text" placeholder="192.168.1.10" required></div>
+                <div class="form-group"><label for="user">Username</label><input id="user" name="user" type="text" placeholder="root" required></div>
+                <div class="form-group"><label for="password">Password</label><input id="password" name="password" type="password" placeholder="••••••••" required></div>
             </div>
-
-            <button type="submit" class="connect-btn">
-                Connect
-            </button>
-
+            <button type="submit" class="connect-btn">Connect</button>
         </div>
     </form>
-
     <div class="terminal-card">
-
-        <div class="terminal-header">
-            {% if auth %}
-                {{ user | default("root") }}@server:~#
-            {% else %}
-                disconnected@terminal:~#
-            {% endif %}
-        </div>
-
-        <div class="terminal-window">
-
-        {% if result %}
-
-            {{ result }}
-
-        {% elif auth %}
-
-            <span class="prompt">{{ user | default("root") }}@server:~#</span>
-
-        {% else %}
-
-            <span class="prompt">System:</span> Not authorized. Connect to server first.
-
-        {% endif %}
-
-        </div>
-
-        </div>
-
+        <div class="terminal-header" id="terminal-header">{% if auth %}{{ user | default('root') }}@server:~#{% else %}disconnected@terminal:~#{% endif %}</div>
+        <div class="terminal-window" id="terminal-output">{% if auth %}{% if result %}{{ result }}{{ '\n' }}{% endif %}<span class="prompt" id="current-prompt">{{ user | default('root') }}@server:~#</span>{% else %}<span class="prompt">System:</span> Not authorized. Connect to server first.{% endif %}</div>
         <div class="terminal-input-container">
-            <form method="post" action="/terminal/command" class="terminal-form">
-                <input
-                    class="terminal-input"
-                    type="text"
-                    name="command"
-                    placeholder="Enter command..."
-                    autocomplete="off"
-                    {% if not auth %}disabled{% endif %}
-                >
-
-                <button class="execute-btn" type="submit" {% if not auth %}disabled{% endif %}>
-                    Execute
-                </button>
+            <form method="post" action="/terminal/command" class="terminal-form" id="terminal-form">
+                <input id="terminal-command" class="terminal-input" type="text" name="command" placeholder="Enter command..." autocomplete="off" {% if not auth %}disabled{% endif %}>
+                <button id="execute-btn" class="execute-btn" type="submit" {% if not auth %}disabled{% endif %}>Execute</button>
             </form>
         </div>
-
     </div>
-
 </div>
+<script>
+    const form = document.getElementById('terminal-form');
+    const terminal = document.getElementById('terminal-output');
+    const input = document.getElementById('terminal-command');
+    const button = document.getElementById('execute-btn');
+    const header = document.getElementById('terminal-header');
+    const history = [];
+    let historyIndex = 0;
+    let draft = '';
+    let busy = false;
 
+    // Add text safely, without interpreting remote output as HTML.
+    function append(text, className = '') {
+        const span = document.createElement('span');
+        span.className = className;
+        span.textContent = text;
+        terminal.appendChild(span);
+        terminal.scrollTop = terminal.scrollHeight;
+        return span;
+    }
+
+    input.addEventListener('keydown', (event) => {
+        if (!history.length || busy) return;
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (historyIndex === history.length) draft = input.value;
+            historyIndex = Math.max(0, historyIndex - 1);
+            input.value = history[historyIndex];
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            historyIndex = Math.min(history.length, historyIndex + 1);
+            input.value = historyIndex === history.length ? draft : history[historyIndex];
+        }
+    });
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Do not reload the page.
+        const command = input.value;
+        if (busy || input.disabled || !command.trim()) return;
+        const formData = new FormData(form);
+        busy = true;
+        history.push(command);
+        historyIndex = history.length;
+        draft = '';
+        input.value = '';
+        input.disabled = true;
+        button.disabled = true;
+        button.textContent = 'Running...';
+        document.getElementById('current-prompt')?.remove();
+        append(header.textContent.trim() + ' ', 'prompt');
+        append(command + '\n');
+        let authorized = true;
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            });
+            if (response.status === 401 || response.status === 403) authorized = false;
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            if (data.auth === false) {
+                authorized = false;
+                throw new Error('SSH session is not authorized. Connect again.');
+            }
+            if (!Object.hasOwn(data, 'result')) throw new Error('Response does not contain result');
+            if (data.user) header.textContent = `${data.user}@server:~#`;
+            const output = data.result == null ? '' : String(data.result);
+            if (output) append(output + (output.endsWith('\n') ? '' : '\n'));
+        } catch (error) {
+            append(`Error: ${error.message}\n`, 'error');
+        } finally {
+            busy = false;
+            input.disabled = !authorized;
+            button.disabled = !authorized;
+            button.textContent = 'Execute';
+            if (authorized) {
+                append(header.textContent.trim(), 'prompt').id = 'current-prompt';
+                input.focus();
+            } else {
+                header.textContent = 'disconnected@terminal:~#';
+                const status = document.querySelector('.status-connected');
+                if (status) { status.className = 'status-disconnected'; status.textContent = '● Not Authorized'; }
+            }
+        }
+    });
+</script>
 </body>
 </html>

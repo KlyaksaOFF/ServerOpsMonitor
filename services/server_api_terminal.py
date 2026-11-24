@@ -25,27 +25,37 @@ async def connect_ssh_to_server(ip, user, password):
 
 
 def send_remote_command_terminal(channel, command):
-    channel.send(command + "\n")
+    channel.send(f"{command}\n")
+    b = channel.send(f"{command}\n")
+    print(b)
 
 
 def read_output(channel):
-    while True:
-        if channel.recv_ready():
-            data = channel.recv(4096)
-            return data.decode()
-        return ""
+    buffer = b""
+    print("Buffer ready:", channel.recv_ready())
+    while channel.recv_ready():
+        buffer += channel.recv(4096)
+        print("Buffer:", repr(buffer))
+    return buffer.decode()
 
 
 async def output(ip, user, password):
     channel = await connect_ssh_to_server(ip, user, password)
-    send_remote_command_terminal(channel, command='ps')
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(5)
     output = await asyncio.to_thread(read_output, channel)
     return output
 
 
 def clean_terminal_output(text: str) -> str:
-    ansi_escape = re.compile(
-        r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])'
+    osc_escape = re.compile(
+        r'\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)'
     )
-    return ansi_escape.sub('', text)
+
+    ansi_escape = re.compile(
+        r'\x1b(?:\[[0-?]*[ -/]*[@-~]|[@-Z\\-_])'
+    )
+
+    text = osc_escape.sub('', text)
+    text = ansi_escape.sub('', text)
+
+    return text
